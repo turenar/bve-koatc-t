@@ -1,0 +1,7 @@
+.vs/
+/build*
+/Debug
+/*.suo
+/*.filters
+/*.user
+/subprojects/*/

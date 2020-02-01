@@ -1,0 +1,5 @@
+#pragma once
+
+namespace turenar::koatc {
+constexpr const char* plugin_version = "@VCS_TAG@";
+}

@@ -1,0 +1,45 @@
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlignTrailingComments: false
+# AllowAllConstructorInitializersOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+# AllowShortLambdasOnASingleLine: Inline
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Attach
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: BeforeColon
+ColumnLimit: 120
+ConstructorInitializerIndentWidth: 8
+ContinuationIndentWidth: 8
+IncludeBlocks: Merge
+IncludeCategories:
+    -   Regex: '<dbghelp.h>'
+        Priority: 5
+    -   Regex: '<[[:alnum:]_.]+>'
+        Priority: 2
+    -   Regex: '<sys/[[:alnum:]_.]+>'
+        Priority: 3
+    -   Regex: '<.+>'
+        Priority: 4
+    -   Regex: '.*'
+        Priority: 6
+IncludeIsMainRegex: '(_test)?\.h$'
+IndentWidth: 4
+Language: Cpp
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: Inner
+PointerAlignment: Left
+SortIncludes: true
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: ControlStatements
+Standard: Cpp11
+TabWidth: 4
+UseTab: ForContinuationAndIndentation
