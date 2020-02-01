@@ -4,7 +4,7 @@ namespace turenar::koatc {
 atc_manager::atc_manager(bve::ats::vehicle_spec spec) : _spec(spec) {}
 
 bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_output output) {
-	_signal_manager.update_panel(output);
+	_signal_manager.output(output);
 
 	return bve::ats::handles{
 			_brake_notch,

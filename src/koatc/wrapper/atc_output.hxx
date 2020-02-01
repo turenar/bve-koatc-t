@@ -12,18 +12,10 @@ private:
 	constexpr static int sound_count = 256;
 
 public:
-	atc_output(int* panels, int* sound) : _panels(panels), _sounds(sound) {}
+	atc_output(int* panels, int* sound);
 
-	void set_panel(panel_id id, int value) {
-		int num = static_cast<int>(id);
-		assert(0 <= num && num < panel_count);
-		_panels[num] = value;
-	}
-	void set_sound(sound_id id, bve::ats::sound_control control) {
-		int num = static_cast<int>(id);
-		assert(0 <= num && num <= sound_count);
-		_sounds[num] = static_cast<int>(control);
-	}
+	void set_panel(panel_id id, int value);
+	void set_sound(sound_id id, bve::ats::sound_control control);
 
 private:
 	int* const _panels;

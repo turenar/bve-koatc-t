@@ -10,10 +10,11 @@ public:
 	[[nodiscard]] car_signal signal() const {
 		return _signal;
 	}
-	void update_panel(wrapper::atc_output output);
+	void output(wrapper::atc_output output);
 
 private:
 	int _open_section = 0;
 	car_signal _signal = car_signal::no_signal;
+	bool _bell = false;
 };
 } // namespace turenar::koatc::signal
