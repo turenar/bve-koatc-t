@@ -4,5 +4,6 @@ vcs_target = vcs_tag(
 
 src_files = files([
 	'ats.cxx',
+	'koatc/signal/signal_manager.cxx',
 	'koatc/atc_manager.cxx',
 ])

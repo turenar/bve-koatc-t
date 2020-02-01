@@ -45,7 +45,7 @@ ATS_API void WINAPI SetVehicleSpec(ATS_VEHICLESPEC sp) {
 ATS_API void WINAPI Initialize(int) {}
 
 ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE state, int* panel, int* sound) {
-	return manager->tick(state, turenar::koatc::wrapper::panels{panel}, turenar::koatc::wrapper::sounds{sound});
+	return manager->tick(state, turenar::koatc::wrapper::atc_output{panel, sound});
 }
 
 ATS_API void WINAPI SetPower(int power) {
@@ -70,9 +70,13 @@ ATS_API void WINAPI DoorOpen(void) {}
 
 ATS_API void WINAPI DoorClose(void) {}
 
-ATS_API void WINAPI SetSignal(int) {}
+ATS_API void WINAPI SetSignal(int open_section) {
+	manager->set_open_section(open_section);
+}
 
-ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA) {}
+ATS_API void WINAPI SetBeaconData(ATS_BEACONDATA beacon) {
+	manager->put_beacon(bve::ats::beacon{beacon});
+}
 }
 
 namespace {
