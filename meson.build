@@ -62,7 +62,7 @@ spdlog_dep = spdlog_orig_dep.as_system()
 
 subdir('src')
 
-ats = shared_library('Ats', [vcs_target, src_files],
+ats = shared_library('Ats', src_files,
 	vs_module_defs: 'src/ats.def',
 	cpp_args: ['-DATS_EXPORTS'],
 	dependencies: [spdlog_dep],

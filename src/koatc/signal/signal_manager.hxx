@@ -10,6 +10,9 @@ public:
 	[[nodiscard]] car_signal signal() const {
 		return _signal;
 	}
+	[[nodiscard]] int open_section() const {
+		return _open_section;
+	}
 	void output(wrapper::atc_output output);
 
 private:

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "ats/beacon.hxx"
 #include "ats/handles.hxx"
 #include "ats/notch_position.hxx"
@@ -8,7 +7,10 @@
 #include "ats/sound_control.hxx"
 #include "ats/vehicle_spec.hxx"
 #include "ats/vehicle_state.hxx"
+#include "koatc/pattern/pattern_manager.hxx"
+#include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
+#include "koatc/timer.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc {
@@ -25,9 +27,7 @@ public:
 	void reverser(bve::ats::reverser_position rev) {
 		_reverser = rev;
 	}
-	void put_beacon(bve::ats::beacon beacon) {
-		_unprocessed_beacons.emplace_back(beacon);
-	}
+	void put_beacon(bve::ats::beacon beacon);
 	void set_open_section(int open_section) {
 		_signal_manager.set_open_section(open_section);
 	}
@@ -36,12 +36,17 @@ public:
 
 private:
 	const bve::ats::vehicle_spec _spec;
-	std::vector<bve::ats::beacon> _unprocessed_beacons;
+	bve::ats::vehicle_state _vehicle_state = {};
 
 	koatc::signal::signal_manager _signal_manager;
+	koatc::section::section_manager _section_manager;
+	koatc::pattern::pattern_manager _pattern_manager;
 
 	bve::ats::reverser_position _reverser = bve::ats::reverser_position::neutral;
 	bve::ats::notch_position _power_notch{0};
 	bve::ats::notch_position _brake_notch{0};
+
+	timer _timer{250};
+	double _last_section_beacon_location = 0;
 };
 } // namespace turenar::koatc
