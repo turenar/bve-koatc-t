@@ -37,6 +37,11 @@ void atc_manager::put_beacon(bve::ats::beacon beacon) {
 		_section_manager.process_beacon(
 				_vehicle_state.location, beacon.distance, static_cast<section::section_type>(beacon.optional));
 		break;
+	case beacon_id::speed_limit_1:
+	case beacon_id::speed_limit_2:
+	case beacon_id::speed_limit_3:
+	case beacon_id::speed_limit_4:
+		_pattern_manager.process_beacon(beacon);
 	default:; // ignore
 	}
 }

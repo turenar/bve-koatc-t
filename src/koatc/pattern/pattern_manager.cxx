@@ -1,7 +1,8 @@
 #include <bitset>
 #include <tuple>
-#include <ats/vehicle_state.hxx>
 #include <spdlog/spdlog.h>
+#include "ats/vehicle_state.hxx"
+#include "koatc/beacon_id.hxx"
 #include "koatc/pattern/pattern_manager.hxx"
 
 namespace turenar::koatc::pattern {
@@ -16,10 +17,14 @@ pattern_manager::pattern_manager(
 		const bve::ats::vehicle_state& state,
 		const turenar::koatc::section::section_manager& section,
 		const turenar::koatc::signal::signal_manager& signal)
-		: _red_section(state, section, signal), _signal_manager(signal), _vehicle_state(state) {}
+		: _signal_manager(signal), _vehicle_state(state),
+		  _red_section(state, section, signal), _speed_limits{{state, 2.}, {state, 2.}, {state, 2.}, {state, 2.}} {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_red_section);
+	for (auto& pat : _speed_limits) {
+		fn(pat);
+	}
 }
 template <typename Accumulator, typename Result>
 Result pattern_manager::accumulate_beacon(Result start, Accumulator op) {
@@ -52,10 +57,7 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 }
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
-	each_beacon([this](auto&& pat) {
-		pat.tick();
-		pat.update_vehicle_state(_vehicle_state);
-	});
+	each_beacon([this](auto&& pat) { pat.tick(); });
 	double limit = accumulate_beacon(pattern_generator::no_pattern, [](double last, const pattern_generator& pat) {
 		return std::min(last, pat.limit());
 	});
@@ -71,6 +73,7 @@ void pattern_manager::update_pattern() {
 				last.promote(pat.handle());
 				return last;
 			});
+
 	if (_limit + updated_bell_threshold <= limit) {
 		_bell = true;
 	}
@@ -81,5 +84,22 @@ void pattern_manager::update_pattern() {
 void pattern_manager::debug_patterns() const {
 	spdlog::debug("patterns:");
 	spdlog::debug("  [section] {}", _red_section);
+	for (auto& pat : _speed_limits) {
+		spdlog::debug("  [speed  ] {}", pat);
+	}
+}
+void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
+	switch (static_cast<beacon_id>(beacon.type)) {
+	case beacon_id::speed_limit_1:
+	case beacon_id::speed_limit_2:
+	case beacon_id::speed_limit_3:
+	case beacon_id::speed_limit_4: {
+		speed_limit_pattern& limiter = _speed_limits[beacon.type - static_cast<int>(beacon_id::speed_limit_1)];
+		int distance = beacon.optional / 1000;
+		int speed = beacon.optional % 1000;
+		limiter.set_target_speed(_vehicle_state.location + distance, speed);
+	}
+	default:; // ignore
+	}
 }
 } // namespace turenar::koatc::pattern
