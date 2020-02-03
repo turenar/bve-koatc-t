@@ -12,6 +12,9 @@ public:
 		}
 		return wake_up;
 	}
+	void reset(int time) {
+		_last_time = time;
+	}
 
 private:
 	const int _interval;

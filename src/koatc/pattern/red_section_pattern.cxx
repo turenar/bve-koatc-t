@@ -22,6 +22,7 @@ void red_section_pattern::update_vehicle_state(const bve::ats::vehicle_state& st
 	int open_section = _signal_manager.open_section();
 	const section::section_info& section = _section_manager.get(open_section);
 	if (open_section <= 0) {
+		_current_limit = 0;
 		_handle.promote(handle_command::emergency());
 	} else if (section.type == section::section_type::with_orp) {
 		if (_handle) { // if activated
