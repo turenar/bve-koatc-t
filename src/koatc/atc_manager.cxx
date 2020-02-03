@@ -20,15 +20,16 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 	return handle;
 }
 void atc_manager::put_beacon(bve::ats::beacon beacon) {
-	spdlog::info("beacon: type={}, distance={}, optional={}", beacon.type, beacon.distance, beacon.optional);
+	spdlog::info(
+			"beacon: @{} type={}, distance={}, optional={}",
+			_vehicle_state.location,
+			beacon.type,
+			beacon.distance,
+			beacon.optional);
 	switch (static_cast<beacon_id>(beacon.type)) {
 	case beacon_id::section:
-		if (_last_section_beacon_location != _vehicle_state.location) {
-			_section_manager.clear();
-			_last_section_beacon_location = _vehicle_state.location;
-		}
-		_section_manager.put_section(
-				_vehicle_state.location + beacon.distance, static_cast<section::section_type>(beacon.optional));
+		_section_manager.process_beacon(
+				_vehicle_state.location, beacon.distance, static_cast<section::section_type>(beacon.optional));
 		break;
 	default:; // ignore
 	}

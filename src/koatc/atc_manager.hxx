@@ -47,6 +47,5 @@ private:
 	bve::ats::notch_position _brake_notch{0};
 
 	timer _timer{250};
-	double _last_section_beacon_location = 0;
 };
 } // namespace turenar::koatc

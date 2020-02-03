@@ -21,7 +21,9 @@ void red_section_pattern::update_vehicle_state(const bve::ats::vehicle_state& st
 
 	int open_section = _signal_manager.open_section();
 	const section::section_info& section = _section_manager.get(open_section);
-	if (section.type == section::section_type::with_orp) {
+	if (open_section <= 0) {
+		_handle.promote(handle_command::emergency());
+	} else if (section.type == section::section_type::with_orp) {
 		if (_handle) { // if activated
 			_handle.promote(handle_command::emergency());
 		}
@@ -29,7 +31,7 @@ void red_section_pattern::update_vehicle_state(const bve::ats::vehicle_state& st
 		if (0 <= _speed && _speed < std::numeric_limits<double>::epsilon()) {
 			_handle.promote(handle_command::full_brake());
 		} else {
-			_current_limit = 5; // ?
+			//			_current_limit = 5; // ?
 			_handle.promote(handle_command::half_brake());
 		}
 	}
