@@ -24,6 +24,7 @@ private:
 	double _emergency_limit = 0;
 	int _bottom = 0;
 	handle_command _handle = handle_command::neutral();
+	bool _bell = false;
 
 	void update_pattern();
 	void update_monitor(wrapper::atc_output);

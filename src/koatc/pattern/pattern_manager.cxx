@@ -9,6 +9,7 @@ namespace {
 	constexpr int atc_monitor_speeds[] = {0,  5,  10, 15, 20, 25, 30, 35, 40,  45,  50,  55,
 										  60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120};
 	constexpr int advance_notice = 10;
+	constexpr int updated_bell_threshold = 2;
 } // namespace
 
 pattern_manager::pattern_manager(
@@ -43,6 +44,11 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 		}
 		output.set_panel(static_cast<panel_id>(panel_base + i), static_cast<int>(needle));
 	}
+
+	if (_bell) {
+		output.set_sound(sound_id::bell, bve::ats::sound_control::play);
+		_bell = false;
+	}
 }
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
@@ -60,10 +66,14 @@ void pattern_manager::update_pattern() {
 			return std::min(last, pat.bottom());
 		}
 	});
-	handle_command handle = accumulate_beacon(handle_command::neutral(), [](handle_command last, const auto& pat) -> handle_command {
-		last.promote(pat.handle());
-		return last;
-	});
+	handle_command handle =
+			accumulate_beacon(handle_command::neutral(), [](handle_command last, const auto& pat) -> handle_command {
+				last.promote(pat.handle());
+				return last;
+			});
+	if (_limit + updated_bell_threshold <= limit) {
+		_bell = true;
+	}
 	_limit = limit;
 	_bottom = bottom;
 	_handle = handle;
