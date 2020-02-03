@@ -3,11 +3,12 @@
 
 namespace turenar::koatc::pattern {
 namespace {
+	constexpr int full_brake_offset = 5;
 	constexpr int emergency_offset = 10;
-}
+} // namespace
 
 // km/h/s -> m/h^2
-pattern_generator::pattern_generator(double deceleration) : _deceleration(deceleration * 3600 * 1000) {}
+pattern_generator::pattern_generator(double deceleration) : _deceleration(deceleration * 3600) {}
 void pattern_generator::clear() {
 	_flat_start_location = minimum_location;
 	_zero_location = maximum_location;
@@ -24,8 +25,9 @@ void pattern_generator::set_target_speed(double location, int speed) {
 	_curve_bottom = speed;
 	_flat_bottom = speed;
 }
-void pattern_generator::update_location(double loc) {
-	_location = loc;
+void pattern_generator::update_vehicle_state(const bve::ats::vehicle_state& state) {
+	_location = state.location;
+	_speed = state.speed;
 	if (_location > _flat_start_location) {
 		_current_bottom = _flat_bottom;
 		_current_limit = _flat_bottom;
@@ -35,12 +37,15 @@ void pattern_generator::update_location(double loc) {
 		_current_limit = std::sqrt(2 * _deceleration * (_zero_location - _location)) / 1000;
 		_current_bottom = _curve_bottom;
 	}
-}
-double pattern_generator::emergency_limit() const {
-	if (_use_emergency) {
-		return _current_limit;
+
+	if (_speed > _current_limit + emergency_offset) {
+		_handle = handle_command::emergency();
+	} else if (_speed > _current_limit + full_brake_offset) {
+		_handle = handle_command::full_brake();
+	} else if (_speed > _current_limit) {
+		_handle = handle_command::half_brake() ;
 	} else {
-		return _current_limit + emergency_offset;
+		_handle = handle_command::neutral() ;
 	}
 }
 } // namespace turenar::koatc::pattern

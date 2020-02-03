@@ -11,14 +11,9 @@ public:
 	pattern_manager(const bve::ats::vehicle_state&, const section::section_manager&, const signal::signal_manager&);
 
 	void tick(wrapper::atc_output);
-	[[nodiscard]] double limit() const {
-		return _limit;
-	}
-	[[nodiscard]] double emergency_limit() const {
-		return _emergency_limit;
-	}
-	[[nodiscard]] int bottom() const {
-		return _bottom;
+
+	[[nodiscard]] handle_command handle() const{
+		return _handle;
 	}
 
 private:
@@ -28,6 +23,7 @@ private:
 	double _limit = 0;
 	double _emergency_limit = 0;
 	int _bottom = 0;
+	handle_command _handle = handle_command::neutral();
 
 	void update_pattern();
 	void update_monitor(wrapper::atc_output);

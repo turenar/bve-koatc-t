@@ -46,32 +46,30 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 }
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
-	each_beacon([location](auto&& pat) {
-		pat.update_location(location);
+	each_beacon([this](auto&& pat) {
 		pat.tick();
+		pat.update_vehicle_state(_vehicle_state);
 	});
-	double limit;
-	double emergency_limit;
-	std::tie(limit, emergency_limit) = accumulate_beacon(
-			std::make_tuple(pattern_generator::no_pattern, pattern_generator::no_pattern),
-			[](std::tuple<double, double> last, const pattern_generator& pat) {
-				return std::make_tuple(
-						std::min(std::get<0>(last), pat.normal_limit()),
-						std::min(std::get<1>(last), pat.normal_limit()));
-			});
+	double limit = accumulate_beacon(pattern_generator::no_pattern, [](double last, const pattern_generator& pat) {
+		return std::min(last, pat.limit());
+	});
 	int bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
-		if (pat.normal_limit() > limit + advance_notice) {
+		if (pat.limit() > limit + advance_notice) {
 			return last;
 		} else {
 			return std::min(last, pat.bottom());
 		}
 	});
+	handle_command handle = accumulate_beacon(handle_command::neutral(), [](handle_command last, const auto& pat) -> handle_command {
+		last.promote(pat.handle());
+		return last;
+	});
 	_limit = limit;
-	_emergency_limit = emergency_limit;
 	_bottom = bottom;
+	_handle = handle;
 }
 void pattern_manager::debug_patterns() const {
 	spdlog::debug("patterns:");
-	spdlog::debug("  section: {}", _red_section);
+	spdlog::debug("  [section] {}", _red_section);
 }
 } // namespace turenar::koatc::pattern

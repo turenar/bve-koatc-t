@@ -1,4 +1,5 @@
 koatc_files = files([
+	'pattern/handle_command.hxx',
 	'pattern/pattern_generator.cxx',
 	'pattern/pattern_generator.hxx',
 	'pattern/pattern_manager.cxx',
@@ -17,6 +18,8 @@ koatc_files = files([
 	'atc_manager.cxx',
 	'atc_manager.hxx',
 	'beacon_id.hxx',
+	'handles.cxx',
+	'handles.hxx',
 	'panel_id.hxx',
 	'sound_id.hxx',
 ])

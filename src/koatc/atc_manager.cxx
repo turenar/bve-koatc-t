@@ -1,6 +1,7 @@
 #include <spdlog/spdlog.h>
 #include "koatc/atc_manager.hxx"
 #include "koatc/beacon_id.hxx"
+#include "koatc/handles.hxx"
 
 namespace turenar::koatc {
 namespace {}
@@ -14,12 +15,9 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 		_pattern_manager.tick(output);
 	}
 
-	return bve::ats::handles{
-			_brake_notch,
-			_power_notch,
-			_reverser,
-			bve::ats::constant_speed_control::disable,
-	};
+	handles handle{_spec, _brake_notch, _power_notch, _reverser};
+	handle.brake(_pattern_manager.handle());
+	return handle;
 }
 void atc_manager::put_beacon(bve::ats::beacon beacon) {
 	spdlog::info("beacon: type={}, distance={}, optional={}", beacon.type, beacon.distance, beacon.optional);

@@ -21,6 +21,7 @@ public:
 			const section::section_manager& section_manager,
 			const signal::signal_manager& signal_manager);
 
+	void update_vehicle_state(const bve::ats::vehicle_state&);
 	void tick();
 
 private:

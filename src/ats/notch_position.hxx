@@ -8,6 +8,13 @@ public:
 	explicit constexpr operator int() const {
 		return _position;
 	}
+	explicit constexpr operator bool() const {
+		return _position != 0;
+	}
+
+	[[nodiscard]] constexpr notch_position half() const {
+		return notch_position{_position / 2};
+	}
 
 private:
 	int _position;

@@ -2,6 +2,8 @@
 
 #include <limits>
 #include <spdlog/fmt/ostr.h>
+#include "ats/vehicle_state.hxx"
+#include "koatc/pattern/handle_command.hxx"
 
 namespace turenar::koatc::pattern {
 class pattern_generator {
@@ -14,23 +16,22 @@ public:
 
 	explicit pattern_generator(double deceleration);
 
-	void use_emergency(bool flag) {
-		_use_emergency = flag;
-	}
-
-	void update_location(double loc);
 	void set_target_speed(double location, int speed);
 	void clear();
 
-	[[nodiscard]] double emergency_limit() const;
-	[[nodiscard]] double normal_limit() const {
+	void update_vehicle_state(const bve::ats::vehicle_state&);
+
+	[[nodiscard]] double limit() const {
 		return _current_limit;
 	}
 	[[nodiscard]] int bottom() const {
 		return _current_bottom;
 	}
+	[[nodiscard]] handle_command handle() const {
+		return _handle;
+	}
 
-private:
+protected:
 	/** m/h^2 */
 	double _deceleration;
 
@@ -41,14 +42,15 @@ private:
 	int _flat_bottom = no_pattern;
 
 	double _location = minimum_location;
+	double _speed = 0;
 	double _current_limit = no_pattern;
 	int _current_bottom = no_pattern;
-
-	bool _use_emergency = false;
+	handle_command _handle = handle_command::neutral();
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const pattern_generator& c) {
-		os << "current: " << c._current_limit << " -> " << c._current_bottom << ", curve: " << c._curve_target << '@';
+		os << "brake: " << c._handle << ", current: " << c._current_limit << " -> " << c._current_bottom
+		   << ", curve: " << c._curve_target << '@';
 		if (c._flat_start_location >= pattern_generator::maximum_location) {
 			os << "null";
 		} else {
