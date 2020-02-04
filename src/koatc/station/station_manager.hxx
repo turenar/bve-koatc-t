@@ -18,6 +18,9 @@ public:
 	[[nodiscard]] bool is_next_station_stop() const;
 	[[nodiscard]] bool has_stop() const;
 	[[nodiscard]] const station_info& next_stop() const;
+	[[nodiscard]] bool stop_arrived() const {
+		return _stop_arrived;
+	}
 
 	void tick(wrapper::atc_output);
 
