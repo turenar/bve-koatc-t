@@ -16,16 +16,23 @@ void pattern_generator::clear() {
 	_zero_location = maximum_location;
 	_flat_bottom = no_pattern;
 }
+void pattern_generator::set_flat_speed(int speed) {
+	_flat_start_location = minimum_location;
+	_flat_bottom = speed;
+}
 void pattern_generator::set_target_speed(double location, int speed) {
 	// v^2 - w^2 = 2ax
 	// x=(v^2-w^2)/2a   where w=0
 	// a=km/1000 h^2, v=km/h, location=m
 	_zero_location = location + (speed * speed) / _deceleration / 2.;
-	spdlog::debug("loc: {}, zero: {}, speed: {}", location, _zero_location, speed);
 	_flat_start_location = location;
 	_curve_target = speed;
 	_curve_bottom = speed;
 	_flat_bottom = speed;
+}
+void pattern_generator::set_target_speed(double location, int flat_speed, int bottom) {
+	set_target_speed(location, flat_speed);
+	_curve_bottom = bottom;
 }
 void pattern_generator::tick() {
 	if (_vehicle_state.location > _flat_start_location) {
@@ -35,12 +42,6 @@ void pattern_generator::tick() {
 		// w^2 = v^2 + 2ax  where v=0
 		// w=km/h, a=km/1000 h^2, x=m
 		_current_limit = std::sqrt(2 * _deceleration * (_zero_location - _vehicle_state.location));
-		spdlog::debug(
-				"dclr: {}, zero: {}, loc: {}, limit: {}",
-				_deceleration,
-				_zero_location,
-				_vehicle_state.location,
-				_current_limit);
 		_current_bottom = _curve_bottom;
 	}
 

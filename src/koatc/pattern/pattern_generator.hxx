@@ -19,7 +19,9 @@ public:
 
 	pattern_generator(const bve::ats::vehicle_state& state, double deceleration);
 
+	void set_flat_speed(int speed);
 	void set_target_speed(double location, int speed);
+	void set_target_speed(double location, int flat_speed, int bottom);
 	void clear();
 
 	void tick();
@@ -51,18 +53,15 @@ protected:
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const pattern_generator& c) {
-		os << "brake: " << c._handle << ", current: " << c._current_limit << " -> " << c._current_bottom
-		   << ", curve: " << c._curve_target << '@';
-		if (c._flat_start_location >= pattern_generator::maximum_location) {
-			os << "null";
-		} else {
-			os << c._flat_start_location;
+		if (c._flat_bottom == no_pattern) {
+			return os << "(inactivated)";
 		}
-		os << " -> " << c._curve_bottom << " -> 0@";
-		if (c._zero_location <= pattern_generator::minimum_location) {
-			os << "null";
+		os << "brake: " << c._handle << ", current: " << c._current_limit << " -> " << c._current_bottom << ", curve: ";
+		if (c._flat_start_location <= pattern_generator::minimum_location) {
+			os << "(inactive)";
 		} else {
-			os << c._zero_location;
+			os << c._curve_target << '@' << c._flat_start_location << " -> " << c._curve_bottom << " -> 0@"
+			   << c._zero_location;
 		}
 		os << ", flat: " << c._flat_bottom;
 		return os;

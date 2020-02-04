@@ -10,6 +10,7 @@
 #include "koatc/pattern/pattern_manager.hxx"
 #include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
+#include "koatc/station/station_manager.hxx"
 #include "koatc/timer.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
@@ -38,9 +39,10 @@ private:
 	const bve::ats::vehicle_spec _spec;
 	bve::ats::vehicle_state _vehicle_state = {};
 
-	koatc::signal::signal_manager _signal_manager;
-	koatc::section::section_manager _section_manager;
-	koatc::pattern::pattern_manager _pattern_manager;
+	signal::signal_manager _signal_manager;
+	section::section_manager _section_manager;
+	station::station_manager _station_manager;
+	pattern::pattern_manager _pattern_manager;
 
 	bve::ats::reverser_position _reverser = bve::ats::reverser_position::neutral;
 	bve::ats::notch_position _power_notch{0};

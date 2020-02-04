@@ -15,16 +15,20 @@ namespace {
 
 pattern_manager::pattern_manager(
 		const bve::ats::vehicle_state& state,
-		const turenar::koatc::section::section_manager& section,
-		const turenar::koatc::signal::signal_manager& signal)
+		const section::section_manager& section,
+		const signal::signal_manager& signal,
+		const station::station_manager& station)
 		: _signal_manager(signal), _vehicle_state(state),
-		  _red_section(state, section, signal), _speed_limits{{state, 2.}, {state, 2.}, {state, 2.}, {state, 2.}} {}
+		  _red_section(state, section, signal), _speed_limits{{state, 2.}, {state, 2.}, {state, 2.}, {state, 2.}},
+		  _station(state, station), _station_upper(state, station) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_red_section);
 	for (auto& pat : _speed_limits) {
 		fn(pat);
 	}
+	fn(_station);
+	fn(_station_upper);
 }
 template <typename Accumulator, typename Result>
 Result pattern_manager::accumulate_beacon(Result start, Accumulator op) {
@@ -88,8 +92,10 @@ void pattern_manager::debug_patterns() const {
 	spdlog::debug("patterns:");
 	spdlog::debug("  [section] {}", _red_section);
 	for (auto& pat : _speed_limits) {
-		spdlog::debug("  [speed  ] {}", pat);
+		spdlog::debug("  [speed]   {}", pat);
 	}
+	spdlog::debug("  [station] {}", _station);
+	spdlog::debug("  [sta_up]  {}", _station);
 }
 void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 	switch (static_cast<beacon_id>(beacon.type)) {

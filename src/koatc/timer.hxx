@@ -12,6 +12,9 @@ public:
 		}
 		return wake_up;
 	}
+	bool waiting_once(int time) {
+		return time <= _last_time + _interval;
+	}
 	void reset(int time) {
 		_last_time = time;
 	}

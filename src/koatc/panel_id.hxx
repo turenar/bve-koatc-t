@@ -12,5 +12,10 @@ enum class panel_id : int {
 	atc_speed_min_0 = 102,
 	atc_speed_max_110 = 124,
 	atc_speed_120 = 125,
+
+	operation_type = 219,
+
+	atc_next_stop = 220,
+	atc_operation_type = 230,
 };
 }
