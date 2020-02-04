@@ -12,12 +12,12 @@ red_section_pattern::red_section_pattern(
 void red_section_pattern::tick() {
 	int open_section = _signal_manager.open_section();
 	const section::section_info& section = _section_manager.get(open_section);
-	double zero_location = section.start_location;
-	if (section.type != section::section_type::with_orp) {
-		zero_location -= safety_pattern_offset;
+	if (section.type == section::section_type::with_orp) {
+		clear();
+	} else {
+		double zero_location = section.start_location - safety_pattern_offset;
+		set_target_speed(zero_location, 0);
 	}
-	set_target_speed(zero_location, 0);
-
 	// parent call
 	pattern_generator::tick();
 

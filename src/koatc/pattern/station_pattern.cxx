@@ -1,4 +1,3 @@
-#include <spdlog/spdlog.h>
 #include "koatc/pattern/station_pattern.hxx"
 #include "koatc/station/station_manager.hxx"
 

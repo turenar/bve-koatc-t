@@ -33,7 +33,6 @@ public:
 	}
 
 	void control_stop(double location, int speed, int bottom, bool use_emergency) {
-		spdlog::debug("control_stop: {},{},{},{},{}", _stop, location, speed, bottom, use_emergency);
 		if (_stop) {
 			_location = location;
 			_speed = speed;

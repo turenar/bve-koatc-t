@@ -95,7 +95,7 @@ void pattern_manager::debug_patterns() const {
 		spdlog::debug("  [speed]   {}", pat);
 	}
 	spdlog::debug("  [station] {}", _station);
-	spdlog::debug("  [sta_up]  {}", _station);
+	spdlog::debug("  [sta_up]  {}", _station_upper);
 }
 void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 	switch (static_cast<beacon_id>(beacon.type)) {
