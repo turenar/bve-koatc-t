@@ -8,7 +8,6 @@ station_pattern::station_pattern(const bve::ats::vehicle_state& state, const sta
 void station_pattern::tick() {
 	if (_station_manager.has_stop()) {
 		const auto& stop = _station_manager.next_stop();
-		spdlog::debug("stop loc={}, sp={}, bottom={}", stop.location(),stop.speed(), stop.bottom());
 		set_target_speed(stop.location(), stop.speed(), stop.bottom());
 		_use_emergency = stop.use_emergency();
 	} else {

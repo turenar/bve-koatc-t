@@ -53,8 +53,12 @@ bool station_manager::has_stop() const {
 void station_manager::approach_station(unsigned int stop_bits, int station) {
 	unsigned int type = _operation_type % 10;
 	bool stop = 0 != (stop_bits & (1u << type));
-	spdlog::debug("approaching station {}, stop={}", station, stop);
-	_stations.emplace_back(station, stop);
+	if (!_stations.empty() && _stations.front().number() == station) {
+		spdlog::warn("duplicated station {}, location jumped?", station);
+	} else {
+		spdlog::debug("approaching station {}, stop={}", station, stop);
+		_stations.emplace_back(station, stop);
+	}
 }
 void station_manager::control_stop(double location, int speed, int bottom, bool use_emergency) {
 	if (_stations.empty()) {
@@ -62,9 +66,6 @@ void station_manager::control_stop(double location, int speed, int bottom, bool 
 	} else if (_next_control_station_index < 0 || _stations.size() <= std::size_t(_next_control_station_index)) {
 		spdlog::warn("wrong station index: {} @{}", _next_control_station_index, _vehicle_state.location);
 	} else {
-		for (auto& sta : _stations) {
-			spdlog::debug("  station: number={}", sta.number());
-		}
 		_stations[_next_control_station_index].control_stop(location, speed, bottom, use_emergency);
 	}
 	_next_control_station_index = 0;
