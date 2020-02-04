@@ -50,6 +50,9 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 		output.set_panel(static_cast<panel_id>(panel_base + i), static_cast<int>(needle));
 	}
 
+	output.set_panel(panel_id::atc_normal_braking, static_cast<int>(_handle && _handle != handle_command::emergency()));
+	output.set_panel(panel_id::atc_emergency_braking, static_cast<int>(_handle == handle_command::emergency()));
+
 	if (_bell) {
 		output.set_sound(sound_id::bell, bve::ats::sound_control::play);
 		_bell = false;

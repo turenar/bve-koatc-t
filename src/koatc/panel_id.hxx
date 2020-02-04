@@ -2,6 +2,9 @@
 
 namespace turenar::koatc {
 enum class panel_id : int {
+	atc_emergency_braking = 22,
+	atc_normal_braking = 23,
+
 	atc_signal_forbidden = 101,
 	atc_signal_red = 131,
 	atc_signal_green = 132,

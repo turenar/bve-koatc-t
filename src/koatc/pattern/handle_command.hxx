@@ -55,4 +55,8 @@ private:
 		return os;
 	}
 };
+
+constexpr bool operator!=(handle_command lhs, handle_command rhs) {
+	return !(lhs == rhs);
+}
 } // namespace turenar::koatc::pattern
