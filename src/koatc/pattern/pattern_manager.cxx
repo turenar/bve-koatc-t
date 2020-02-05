@@ -65,9 +65,8 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
 	each_beacon([this](auto&& pat) { pat.tick(); });
-	double limit = accumulate_beacon(pattern_generator::no_pattern, [](double last, const pattern_generator& pat) {
-		return std::min(last, pat.limit());
-	});
+	double limit = accumulate_beacon(
+			no_pattern, [](double last, const pattern_generator& pat) { return std::min(last, pat.limit()); });
 	int bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
 		if (pat.limit() > limit + advance_notice) {
 			return last;

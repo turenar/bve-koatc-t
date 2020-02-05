@@ -8,7 +8,8 @@ red_section_pattern::red_section_pattern(
 		const bve::ats::vehicle_state& state,
 		const section::section_manager& section_manager,
 		const signal::signal_manager& signal_manager)
-		: pattern_generator(state, deceleration), _signal_manager(signal_manager), _section_manager(section_manager) {}
+		: pattern_generator(state, default_deceleration), _signal_manager(signal_manager),
+		  _section_manager(section_manager) {}
 void red_section_pattern::tick() {
 	int open_section = _signal_manager.open_section();
 	const section::section_info& section = _section_manager.get(open_section);

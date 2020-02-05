@@ -10,41 +10,36 @@ namespace {
 
 // km/h/s -> km/1000 h^2
 pattern_generator::pattern_generator(const bve::ats::vehicle_state& state, double dec)
-		: _vehicle_state(state), _deceleration(dec * 3.6) {}
+		: _vehicle_state(state), _curve(dec * 3.6) {}
 void pattern_generator::clear() {
-	_flat_start_location = minimum_location;
-	_zero_location = maximum_location;
-	_flat_bottom = no_pattern;
+	_curve.clear();
+	_flat.clear();
 }
 void pattern_generator::set_flat_speed(int speed) {
-	_flat_start_location = minimum_location;
-	_flat_bottom = speed;
+	_curve.clear();
+	_flat.generate_pattern(speed);
 }
 void pattern_generator::set_target_speed(double location, int speed) {
-	// v^2 - w^2 = 2ax
-	// x=(v^2-w^2)/2a   where w=0
-	// a=km/1000 h^2, v=km/h, location=m
-	_zero_location = location + (speed * speed) / _deceleration / 2.;
-	_flat_start_location = location;
-	_curve_target = speed;
-	_curve_bottom = speed;
-	_flat_bottom = speed;
+	set_target_speed(location, speed, speed);
 }
 void pattern_generator::set_target_speed(double location, int flat_speed, int bottom) {
-	set_target_speed(location, flat_speed);
-	_curve_bottom = bottom;
+	_curve.generate_pattern(location, flat_speed, bottom);
+	_flat.generate_pattern(bottom);
 }
 void pattern_generator::tick() {
-	if (_vehicle_state.location > _flat_start_location) {
-		_current_bottom = _flat_bottom;
-		_current_limit = _flat_bottom;
+	update_pattern();
+	update_handle();
+}
+void pattern_generator::update_pattern() {
+	if (_curve) {
+		_current_limit = _curve.limit_of(_vehicle_state.location);
+		_current_bottom = _curve.bottom();
 	} else {
-		// w^2 = v^2 + 2ax  where v=0
-		// w=km/h, a=km/1000 h^2, x=m
-		_current_limit = std::sqrt(2 * _deceleration * (_zero_location - _vehicle_state.location));
-		_current_bottom = _curve_bottom;
+		_current_limit = _flat.limit_of(_vehicle_state.location);
+		_current_bottom = _flat.bottom();
 	}
-
+}
+void pattern_generator::update_handle() {
 	if (_vehicle_state.speed > _current_limit + emergency_offset) {
 		_handle = handle_command::emergency();
 	} else if (_vehicle_state.speed > _current_limit + full_brake_offset) {

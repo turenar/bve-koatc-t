@@ -1,5 +1,9 @@
 koatc_files = files([
+	'pattern/curve_pattern.cxx',
+	'pattern/curve_pattern.hxx',
+	'pattern/flat_pattern.hxx',
 	'pattern/handle_command.hxx',
+	'pattern/pattern_const.hxx',
 	'pattern/pattern_generator.cxx',
 	'pattern/pattern_generator.hxx',
 	'pattern/pattern_manager.cxx',
