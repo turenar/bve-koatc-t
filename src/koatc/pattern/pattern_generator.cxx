@@ -24,7 +24,7 @@ void pattern_generator::set_target_speed(double location, int speed) {
 }
 void pattern_generator::set_target_speed(double location, int flat_speed, int bottom) {
 	_curve.generate_pattern(location, flat_speed, bottom);
-	_flat.generate_pattern(bottom);
+	_flat.generate_pattern(flat_speed);
 }
 void pattern_generator::tick() {
 	update_pattern();
