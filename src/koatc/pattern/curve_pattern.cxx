@@ -1,4 +1,5 @@
 #include <cmath>
+#include <spdlog/spdlog.h>
 #include "koatc/pattern/curve_pattern.hxx"
 
 namespace turenar::koatc::pattern {

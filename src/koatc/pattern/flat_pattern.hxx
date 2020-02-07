@@ -6,8 +6,6 @@
 namespace turenar::koatc::pattern {
 class flat_pattern {
 public:
-	explicit flat_pattern() {}
-
 	void generate_pattern(int bottom) {
 		_bottom = bottom;
 	}
@@ -26,7 +24,7 @@ public:
 	}
 
 private:
-	int _bottom;
+	int _bottom = no_pattern;
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const flat_pattern& c) {

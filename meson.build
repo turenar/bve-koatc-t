@@ -31,6 +31,7 @@ if cpp_compiler.get_id() != 'msvc'
 
 	if get_option('warning_level') == '3'
 		cppflags += [
+			'-Wconversion',
 			'-Wctor-dtor-privacy',
 			'-Wdelete-non-virtual-dtor',
 			'-Wdisabled-optimization',

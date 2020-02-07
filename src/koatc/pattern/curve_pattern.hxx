@@ -11,8 +11,8 @@ public:
 	void generate_pattern(double location, int speed, int bottom);
 	void clear();
 
-	[[nodiscard]] explicit operator bool() const {
-		return _flat_start_location > minimum_location;
+	[[nodiscard]] bool active(double location) const {
+		return location < _flat_start_location;
 	}
 	[[nodiscard]] double limit_of(double location) const;
 	[[nodiscard]] int bottom() const {
@@ -29,7 +29,7 @@ private:
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const curve_pattern& c) {
-		if (!c) {
+		if (c._flat_start_location <= minimum_location) {
 			return os << "(inactive)";
 		} else {
 			return os << c._target << '@' << c._flat_start_location << " -> " << c._bottom << " -> 0@"

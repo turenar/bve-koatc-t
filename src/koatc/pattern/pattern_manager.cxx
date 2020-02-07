@@ -65,9 +65,12 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
 	each_beacon([this](auto&& pat) { pat.tick(); });
-	double limit = accumulate_beacon(
-			no_pattern, [](double last, const pattern_generator& pat) { return std::min(last, pat.limit()); });
+	double limit = accumulate_beacon(static_cast<double>(no_pattern), [](double last, const pattern_generator& pat) {
+		spdlog::debug("{}, {}", last, pat.limit());
+		return std::min(last, pat.limit());
+	});
 	int bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
+		spdlog::debug("limit={}, bottom={}, pat_limit={}, pat_bottom={}", limit, last, pat.limit(), pat.bottom());
 		if (pat.limit() > limit + advance_notice) {
 			return last;
 		} else {
@@ -88,7 +91,7 @@ void pattern_manager::update_pattern() {
 	_handle = handle;
 }
 void pattern_manager::debug_patterns() const {
-	spdlog::debug("patterns:");
+	spdlog::debug("patterns: brake={}, current={} -> {}", _handle, _limit, _bottom);
 	spdlog::debug("  [section] {}", _red_section);
 	for (auto& pat : _speed_limits) {
 		spdlog::debug("  [speed]   {}", pat);

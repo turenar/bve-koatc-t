@@ -31,7 +31,7 @@ void pattern_generator::tick() {
 	update_handle();
 }
 void pattern_generator::update_pattern() {
-	if (_curve) {
+	if (_curve.active(_vehicle_state.location)) {
 		_current_limit = _curve.limit_of(_vehicle_state.location);
 		_current_bottom = _curve.bottom();
 	} else {
