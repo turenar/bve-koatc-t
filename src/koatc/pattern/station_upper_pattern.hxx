@@ -8,7 +8,7 @@ class station_manager;
 namespace turenar::koatc::pattern {
 class station_upper_pattern : public pattern_generator {
 public:
-	station_upper_pattern(const bve::ats::vehicle_state&, const station::station_manager&);
+	station_upper_pattern(const configuration&, const bve::ats::vehicle_state&, const station::station_manager&);
 
 	void tick();
 

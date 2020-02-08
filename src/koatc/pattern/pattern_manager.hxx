@@ -9,10 +9,15 @@
 #include "koatc/pattern/station_upper_pattern.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
+namespace turenar::koatc {
+class configuration;
+}
+
 namespace turenar::koatc::pattern {
 class pattern_manager {
 public:
 	pattern_manager(
+			const configuration& config,
 			const bve::ats::vehicle_state&,
 			const section::section_manager&,
 			const signal::signal_manager&,
@@ -27,6 +32,7 @@ public:
 	void process_beacon(const bve::ats::beacon& beacon);
 
 private:
+	const configuration& _config;
 	const signal::signal_manager& _signal_manager;
 	const bve::ats::vehicle_state& _vehicle_state;
 

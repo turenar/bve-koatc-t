@@ -1,4 +1,6 @@
 koatc_files = files([
+	'logger/wchar_wrapper.cxx',
+	'logger/wchar_wrapper.hxx',
 	'pattern/curve_pattern.cxx',
 	'pattern/curve_pattern.hxx',
 	'pattern/flat_pattern.hxx',
@@ -29,6 +31,8 @@ koatc_files = files([
 	'atc_manager.cxx',
 	'atc_manager.hxx',
 	'beacon_id.hxx',
+	'configuration.hxx',
+	'configuration.cxx',
 	'handles.cxx',
 	'handles.hxx',
 	'panel_id.hxx',

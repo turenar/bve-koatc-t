@@ -12,9 +12,9 @@ namespace {
 		return p % 1000;
 	}
 } // namespace
-atc_manager::atc_manager(bve::ats::vehicle_spec spec)
-		: _spec(spec), _signal_manager(_vehicle_state), _station_manager(_vehicle_state),
-		  _pattern_manager(_vehicle_state, _section_manager, _signal_manager, _station_manager) {}
+atc_manager::atc_manager(configuration config, bve::ats::vehicle_spec spec)
+		: _spec(spec), _config(config), _signal_manager(_vehicle_state), _station_manager(_vehicle_state),
+		  _pattern_manager(_config, _vehicle_state, _section_manager, _signal_manager, _station_manager) {}
 
 bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_output output) {
 	_vehicle_state = st;

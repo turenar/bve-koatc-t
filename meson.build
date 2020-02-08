@@ -12,7 +12,7 @@ project('bve_koatc', 'cpp',
 
 cpp_compiler = meson.get_compiler('cpp')
 
-add_project_arguments('-DUNICODE', language: 'cpp')
+add_project_arguments('-DUNICODE', '-D_UNICODE', language: 'cpp')
 if cpp_compiler.get_id() == 'msvc'
 	add_project_arguments('/utf-8', language: 'cpp')
 endif

@@ -17,6 +17,7 @@ namespace turenar::koatc::pattern {
 class red_section_pattern : public pattern_generator {
 public:
 	red_section_pattern(
+			const configuration& config,
 			const bve::ats::vehicle_state&,
 			const section::section_manager& section_manager,
 			const signal::signal_manager& signal_manager);

@@ -1,16 +1,19 @@
-#include <cmath>
 #include <spdlog/spdlog.h>
+#include "koatc/configuration.hxx"
 #include "koatc/pattern/pattern_generator.hxx"
 
 namespace turenar::koatc::pattern {
 namespace {
-	constexpr int full_brake_offset = 5;
-	constexpr int emergency_offset = 10;
+	double deceleration(const configuration& config, bool use_emergency) {
+		return use_emergency ? config.deceleration_emergency() : config.deceleration();
+	}
 } // namespace
 
 // km/h/s -> km/1000 h^2
-pattern_generator::pattern_generator(const bve::ats::vehicle_state& state, double dec)
-		: _vehicle_state(state), _curve(dec * 3.6) {}
+pattern_generator::pattern_generator(
+		const configuration& config, const bve::ats::vehicle_state& state, bool use_emergency)
+		: _config(config), _vehicle_state(state), _curve(deceleration(config, use_emergency) * 3.6),
+		  _use_emergency(use_emergency) {}
 void pattern_generator::clear() {
 	_curve.clear();
 	_flat.clear();
@@ -40,11 +43,34 @@ void pattern_generator::update_pattern() {
 	}
 }
 void pattern_generator::update_handle() {
-	if (_vehicle_state.speed > _current_limit + emergency_offset) {
+	if (_use_emergency) {
+		update_handle_emergency();
+	} else {
+		update_handle_normal();
+	}
+}
+void pattern_generator::update_handle_emergency() {
+	double over_speed = _vehicle_state.speed - _current_limit;
+	spdlog::debug("{}, {}, {}", _use_emergency, _vehicle_state.speed, over_speed);
+	if (over_speed > _config.pattern_offset()) {
 		_handle = handle_command::emergency();
-	} else if (_vehicle_state.speed > _current_limit + full_brake_offset) {
+	} else {
+		_handle = handle_command::neutral();
+	}
+}
+void pattern_generator::update_handle_normal() {
+	double over_speed = _vehicle_state.speed - _current_limit;
+	spdlog::debug("{}, {}, {}", _use_emergency, _vehicle_state.speed, over_speed);
+	spdlog::debug(
+			"> {}, {}, {}",
+			_config.pattern_offset_emergency(),
+			_config.pattern_offset_full(),
+			_config.pattern_offset());
+	if (over_speed > _config.pattern_offset_emergency()) {
+		_handle = handle_command::emergency();
+	} else if (over_speed > _config.pattern_offset_full()) {
 		_handle = handle_command::full_brake();
-	} else if (_vehicle_state.speed > _current_limit) {
+	} else if (over_speed > _config.pattern_offset()) {
 		_handle = handle_command::half_brake();
 	} else {
 		_handle = handle_command::neutral();

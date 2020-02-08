@@ -14,13 +14,14 @@ namespace {
 } // namespace
 
 pattern_manager::pattern_manager(
+		const configuration& config,
 		const bve::ats::vehicle_state& state,
 		const section::section_manager& section,
 		const signal::signal_manager& signal,
 		const station::station_manager& station)
-		: _signal_manager(signal), _vehicle_state(state),
-		  _red_section(state, section, signal), _speed_limits{{state, 2.}, {state, 2.}, {state, 2.}, {state, 2.}},
-		  _station(state, station), _station_upper(state, station) {}
+		: _config(config), _signal_manager(signal), _vehicle_state(state), _red_section(config, state, section, signal),
+		  _speed_limits{{config, state}, {config, state}, {config, state}, {config, state}},
+		  _station(config, state, station), _station_upper(config, state, station) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_red_section);

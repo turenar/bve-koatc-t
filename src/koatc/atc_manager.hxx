@@ -7,6 +7,7 @@
 #include "ats/sound_control.hxx"
 #include "ats/vehicle_spec.hxx"
 #include "ats/vehicle_state.hxx"
+#include "koatc/configuration.hxx"
 #include "koatc/pattern/pattern_manager.hxx"
 #include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
@@ -17,7 +18,7 @@
 namespace turenar::koatc {
 class atc_manager {
 public:
-	explicit atc_manager(bve::ats::vehicle_spec spec);
+	explicit atc_manager(configuration config, bve::ats::vehicle_spec spec);
 
 	void power(bve::ats::notch_position notch) {
 		_power_notch = notch;
@@ -37,6 +38,7 @@ public:
 
 private:
 	const bve::ats::vehicle_spec _spec;
+	configuration _config;
 	bve::ats::vehicle_state _vehicle_state = {};
 
 	signal::signal_manager _signal_manager;
