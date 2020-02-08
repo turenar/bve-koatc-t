@@ -26,7 +26,7 @@ public:
 
 	void approach_station(unsigned int stop_bits, int station);
 	void next_control_station(int index);
-	void control_stop(double location, int speed, int bottom, bool use_emergency);
+	void control_stop(double location, int speed, int bottom);
 	void notify_stop();
 	void arrive_station();
 

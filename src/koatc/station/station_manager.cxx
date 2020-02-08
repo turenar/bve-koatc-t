@@ -60,13 +60,13 @@ void station_manager::approach_station(unsigned int stop_bits, int station) {
 		_stations.emplace_back(station, stop);
 	}
 }
-void station_manager::control_stop(double location, int speed, int bottom, bool use_emergency) {
+void station_manager::control_stop(double location, int speed, int bottom) {
 	if (_stations.empty()) {
 		spdlog::warn("no station registered! @{}", _vehicle_state.location);
 	} else if (_next_control_station_index < 0 || _stations.size() <= std::size_t(_next_control_station_index)) {
 		spdlog::warn("wrong station index: {} @{}", _next_control_station_index, _vehicle_state.location);
 	} else {
-		_stations[_next_control_station_index].control_stop(location, speed, bottom, use_emergency);
+		_stations[_next_control_station_index].control_stop(location, speed, bottom);
 	}
 	_next_control_station_index = 0;
 }

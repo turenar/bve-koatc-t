@@ -28,16 +28,12 @@ public:
 	[[nodiscard]] int bottom() const {
 		return _bottom;
 	}
-	[[nodiscard]] bool use_emergency() const {
-		return _use_emergency;
-	}
 
-	void control_stop(double location, int speed, int bottom, bool use_emergency) {
+	void control_stop(double location, int speed, int bottom) {
 		if (_stop) {
 			_location = location;
 			_speed = speed;
 			_bottom = bottom;
-			_use_emergency = use_emergency;
 		}
 	}
 
@@ -47,6 +43,5 @@ private:
 	double _location = 0;
 	int _speed = no_pattern;
 	int _bottom = no_pattern;
-	bool _use_emergency = false;
 };
 } // namespace turenar::koatc::station

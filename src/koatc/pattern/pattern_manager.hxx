@@ -5,8 +5,8 @@
 #include "ats/handles.hxx"
 #include "koatc/pattern/red_section_pattern.hxx"
 #include "koatc/pattern/speed_limit_pattern.hxx"
+#include "koatc/pattern/station_emergency_pattern.hxx"
 #include "koatc/pattern/station_pattern.hxx"
-#include "koatc/pattern/station_upper_pattern.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc {
@@ -39,7 +39,7 @@ private:
 	red_section_pattern _red_section;
 	speed_limit_pattern _speed_limits[4];
 	station_pattern _station;
-	station_upper_pattern _station_upper;
+	station_emergency_pattern _station_emergency;
 
 	double _limit = 0;
 	int _bottom = 0;

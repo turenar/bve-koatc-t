@@ -9,15 +9,12 @@ void station_pattern::tick() {
 	if (_station_manager.has_stop()) {
 		if (_station_manager.stop_arrived()) {
 			set_flat_speed(5);
-			_use_emergency = false;
 		} else {
 			const auto& stop = _station_manager.next_stop();
 			set_target_speed(stop.location(), stop.speed(), stop.bottom());
-			_use_emergency = stop.use_emergency();
 		}
 	} else {
 		clear();
-		_use_emergency = false;
 	}
 
 	pattern_generator::tick();

@@ -47,6 +47,7 @@ void atc_manager::put_beacon(bve::ats::beacon beacon) {
 		_section_manager.process_beacon(
 				_vehicle_state.location, beacon.distance, static_cast<section::section_type>(optional));
 		break;
+	case beacon_id::control_stop_emergency:
 	case beacon_id::speed_limit_1:
 	case beacon_id::speed_limit_2:
 	case beacon_id::speed_limit_3:
@@ -60,19 +61,11 @@ void atc_manager::put_beacon(bve::ats::beacon beacon) {
 		_station_manager.approach_station(static_cast<unsigned int>(optional / 100), optional % 100);
 		break;
 	case beacon_id::control_stop:
-		_station_manager.control_stop(
-				_vehicle_state.location + extract_distance(optional), extract_speed(optional), 0, false);
-		break;
-	case beacon_id::control_stop_emergency:
-		_station_manager.control_stop(
-				_vehicle_state.location + extract_distance(optional), extract_speed(optional), 0, true);
+		_station_manager.control_stop(_vehicle_state.location + extract_distance(optional), extract_speed(optional), 0);
 		break;
 	case beacon_id::control_stop_to_25:
 		_station_manager.control_stop(
-				_vehicle_state.location + extract_distance(optional),
-				extract_speed(optional),
-				extract_speed(optional),
-				false);
+				_vehicle_state.location + extract_distance(optional), extract_speed(optional), extract_speed(optional));
 		break;
 	case beacon_id::notify_stop:
 		_station_manager.notify_stop();

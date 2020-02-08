@@ -11,6 +11,13 @@ namespace {
 										  60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 120};
 	constexpr int advance_notice = 10;
 	constexpr int updated_bell_threshold = 2;
+
+	constexpr int extract_distance(int p) {
+		return p / 1000;
+	}
+	constexpr int extract_speed(int p) {
+		return p % 1000;
+	}
 } // namespace
 
 pattern_manager::pattern_manager(
@@ -21,7 +28,7 @@ pattern_manager::pattern_manager(
 		const station::station_manager& station)
 		: _config(config), _signal_manager(signal), _vehicle_state(state), _red_section(config, state, section, signal),
 		  _speed_limits{{config, state}, {config, state}, {config, state}, {config, state}},
-		  _station(config, state, station), _station_upper(config, state, station) {}
+		  _station(config, state, station), _station_emergency(config, state, station) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_red_section);
@@ -29,7 +36,7 @@ void pattern_manager::each_beacon(UnaryFunction fn) {
 		fn(pat);
 	}
 	fn(_station);
-	fn(_station_upper);
+	fn(_station_emergency);
 }
 template <typename Accumulator, typename Result>
 Result pattern_manager::accumulate_beacon(Result start, Accumulator op) {
@@ -98,7 +105,7 @@ void pattern_manager::debug_patterns() const {
 		spdlog::debug("  [speed]   {}", pat);
 	}
 	spdlog::debug("  [station] {}", _station);
-	spdlog::debug("  [sta_up]  {}", _station_upper);
+	spdlog::debug("  [sta_up]  {}", _station_emergency);
 }
 void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 	switch (static_cast<beacon_id>(beacon.type)) {
@@ -110,7 +117,11 @@ void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 		int distance = beacon.optional / 1000;
 		int speed = beacon.optional % 1000;
 		limiter.set_target_speed(_vehicle_state.location + distance, speed);
-	}
+	} break;
+	case beacon_id::control_stop_emergency:
+		_station_emergency.activate(
+				_vehicle_state.location + extract_distance(beacon.optional), extract_speed(beacon.optional));
+		break;
 	default:; // ignore
 	}
 }
