@@ -51,7 +51,6 @@ void pattern_generator::update_handle() {
 }
 void pattern_generator::update_handle_emergency() {
 	double over_speed = _vehicle_state.speed - _current_limit;
-	spdlog::debug("{}, {}, {}", _use_emergency, _vehicle_state.speed, over_speed);
 	if (over_speed > _config.pattern_offset()) {
 		_handle = handle_command::emergency();
 	} else {
@@ -60,12 +59,6 @@ void pattern_generator::update_handle_emergency() {
 }
 void pattern_generator::update_handle_normal() {
 	double over_speed = _vehicle_state.speed - _current_limit;
-	spdlog::debug("{}, {}, {}", _use_emergency, _vehicle_state.speed, over_speed);
-	spdlog::debug(
-			"> {}, {}, {}",
-			_config.pattern_offset_emergency(),
-			_config.pattern_offset_full(),
-			_config.pattern_offset());
 	if (over_speed > _config.pattern_offset_emergency()) {
 		_handle = handle_command::emergency();
 	} else if (over_speed > _config.pattern_offset_full()) {

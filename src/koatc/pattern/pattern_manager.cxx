@@ -28,13 +28,16 @@ pattern_manager::pattern_manager(
 		const station::station_manager& station)
 		: _config(config), _signal_manager(signal), _vehicle_state(state), _red_section(config, state, section, signal),
 		  _speed_limits{{config, state}, {config, state}, {config, state}, {config, state}},
-		  _station(config, state, station), _station_emergency(config, state, station) {}
+		  _station(config, state, station), _station_emergency(config, state, station),
+		  _orp_step1(config, state, signal, section), _orp_step2(config, state, signal, section) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_red_section);
 	for (auto& pat : _speed_limits) {
 		fn(pat);
 	}
+	fn(_orp_step1);
+	fn(_orp_step2);
 	fn(_station);
 	fn(_station_emergency);
 }
@@ -43,6 +46,12 @@ Result pattern_manager::accumulate_beacon(Result start, Accumulator op) {
 	Result ret = std::move(start);
 	each_beacon([&op, &ret](auto&& generator) mutable { ret = op(ret, generator); });
 	return ret;
+}
+template <typename Pattern, typename... Args>
+void pattern_manager::activate_beacon(Pattern& pattern, const bve::ats::beacon& beacon, Args&&... args) {
+	int distance = beacon.optional / 1000;
+	int speed = beacon.optional % 1000;
+	pattern.activate(std::forward<Args>(args)..., _vehicle_state.location + distance, speed);
 }
 void pattern_manager::tick(wrapper::atc_output output) {
 	update_monitor(output);
@@ -80,7 +89,6 @@ void pattern_manager::update_pattern() {
 		return std::min(last, pat.limit());
 	});
 	int bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
-		spdlog::debug("limit={}, bottom={}, pat_limit={}, pat_bottom={}", limit, last, pat.limit(), pat.bottom());
 		if (pat.limit() > limit + advance_notice) {
 			return last;
 		} else {
@@ -106,8 +114,10 @@ void pattern_manager::debug_patterns() const {
 	for (auto& pat : _speed_limits) {
 		spdlog::debug("  [speed]   {}", pat);
 	}
+	spdlog::debug("  [orp1]    {}", _orp_step1);
+	spdlog::debug("  [orp2]    {}", _orp_step2);
 	spdlog::debug("  [station] {}", _station);
-	spdlog::debug("  [sta_emg]  {}", _station_emergency);
+	spdlog::debug("  [sta_emg] {}", _station_emergency);
 }
 void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 	switch (static_cast<beacon_id>(beacon.type)) {
@@ -116,11 +126,16 @@ void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 	case beacon_id::speed_limit_3:
 	case beacon_id::speed_limit_4: {
 		speed_limit_pattern& limiter = _speed_limits[beacon.type - static_cast<int>(beacon_id::speed_limit_1)];
-		int distance = beacon.optional / 1000;
-		int speed = beacon.optional % 1000;
-		limiter.set_target_speed(_vehicle_state.location + distance, speed);
+		activate_beacon(limiter, beacon);
 	} break;
+	case beacon_id::overrun_protection_step1:
+		activate_beacon(_orp_step1, beacon, beacon.signal, _vehicle_state.location + beacon.distance);
+		break;
+	case beacon_id::overrun_protection_step2:
+		activate_beacon(_orp_step2, beacon, beacon.signal, _vehicle_state.location + beacon.distance);
+		[[fallthrough]];
 	case beacon_id::control_stop_emergency:
+		activate_beacon(_station_emergency, beacon);
 		_station_emergency.activate(
 				_vehicle_state.location + extract_distance(beacon.optional), extract_speed(beacon.optional));
 		break;

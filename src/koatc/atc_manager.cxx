@@ -35,18 +35,22 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 }
 void atc_manager::put_beacon(bve::ats::beacon beacon) {
 	int optional = beacon.optional;
+	auto type = static_cast<beacon_id>(beacon.type);
 	spdlog::info(
-			"beacon: @{} type={}, distance={}, optional={}",
+			"beacon: @{} type={}({}), distance={}, optional={}, signal={}",
 			_vehicle_state.location,
 			beacon.type,
+			type,
 			beacon.distance,
-			optional);
-	auto type = static_cast<beacon_id>(beacon.type);
+			optional,
+			beacon.signal);
 	switch (type) {
 	case beacon_id::section:
 		_section_manager.process_beacon(
 				_vehicle_state.location, beacon.distance, static_cast<section::section_type>(optional));
 		break;
+	case beacon_id::overrun_protection_step1:
+	case beacon_id::overrun_protection_step2:
 	case beacon_id::control_stop_emergency:
 	case beacon_id::speed_limit_1:
 	case beacon_id::speed_limit_2:
@@ -54,7 +58,7 @@ void atc_manager::put_beacon(bve::ats::beacon beacon) {
 	case beacon_id::speed_limit_4:
 		_pattern_manager.process_beacon(beacon);
 		break;
-	case beacon_id::train_number_and_current_station:
+	case beacon_id::train_number_and_current_stop:
 		_station_manager.train_number(beacon.optional / 100);
 		break;
 	case beacon_id::approach_station:

@@ -7,9 +7,9 @@ station_emergency_pattern::station_emergency_pattern(
 		: pattern_generator(config, state, true), _station_manager(manager) {}
 void station_emergency_pattern::tick() {
 	if (_station_manager.is_next_station_stop() && _station_number == _station_manager.next_stop().number()) {
-		if (_low_speed || _vehicle_state.speed < 5) {
+		if (_low_speed || _vehicle_state.speed < too_low_speed) {
 			_low_speed = true;
-			set_flat_speed(5);
+			set_flat_speed(too_low_speed);
 		}
 	} else {
 		_station_number = invalid_station;

@@ -23,6 +23,9 @@ public:
 
 	void tick();
 
+	[[nodiscard]] bool active() const {
+		return !!_flat;
+	}
 	[[nodiscard]] double limit() const {
 		return _current_limit;
 	}
@@ -53,7 +56,7 @@ protected:
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const pattern_generator& c) {
-		if (!c._flat) {
+		if (!c.active()) {
 			return os << "(inactive)";
 		}
 		os << "brake: " << c._handle << ", current: " << c._current_limit << " -> " << c._current_bottom

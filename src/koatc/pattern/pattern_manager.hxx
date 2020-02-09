@@ -3,6 +3,8 @@
 #include <type_traits>
 #include "ats/beacon.hxx"
 #include "ats/handles.hxx"
+#include "koatc/pattern/overrun_protection_step1_pattern.hxx"
+#include "koatc/pattern/overrun_protection_step2_pattern.hxx"
 #include "koatc/pattern/red_section_pattern.hxx"
 #include "koatc/pattern/speed_limit_pattern.hxx"
 #include "koatc/pattern/station_emergency_pattern.hxx"
@@ -40,6 +42,8 @@ private:
 	speed_limit_pattern _speed_limits[4];
 	station_pattern _station;
 	station_emergency_pattern _station_emergency;
+	overrun_protection_step1_pattern _orp_step1;
+	overrun_protection_step2_pattern _orp_step2;
 
 	double _limit = 0;
 	int _bottom = 0;
@@ -54,5 +58,7 @@ private:
 	Result accumulate_beacon(Result start, Accumulator op);
 	template <typename UnaryFunction>
 	void each_beacon(UnaryFunction fn);
+	template <typename Pattern, typename... Args>
+	void activate_beacon(Pattern& pattern, const bve::ats::beacon&, Args&&... args);
 };
 } // namespace turenar::koatc::pattern
