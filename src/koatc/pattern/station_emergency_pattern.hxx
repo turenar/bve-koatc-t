@@ -15,15 +15,12 @@ public:
 	station_emergency_pattern(const configuration&, const bve::ats::vehicle_state&, const station::station_manager&);
 
 	void activate(double location, int speed);
-	[[nodiscard]] bool buzzer() const {
-		return _station_number != invalid_station && !_low_speed;
-	}
+	[[nodiscard]] bool buzzer() const ;
 	void tick();
 
 private:
 	const station::station_manager& _station_manager;
 	int _station_number = invalid_station;
 	bool _low_speed = false;
-	bool _buzzer;
 };
 } // namespace turenar::koatc::pattern

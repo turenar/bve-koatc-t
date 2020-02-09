@@ -14,6 +14,8 @@ public:
 
 	void tick();
 
+	[[nodiscard]] bool buzzer() const;
+
 private:
 	bool _low_speed;
 };

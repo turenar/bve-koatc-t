@@ -1,3 +1,4 @@
+#include "koatc/configuration.hxx"
 #include "koatc/pattern/station_emergency_pattern.hxx"
 #include "koatc/station/station_manager.hxx"
 
@@ -18,6 +19,9 @@ void station_emergency_pattern::tick() {
 	}
 
 	pattern_generator::tick();
+}
+bool station_emergency_pattern::buzzer() const {
+	return _station_number != invalid_station && _current_limit <= 25 + _config.pattern_approaching() && !_low_speed;
 }
 void station_emergency_pattern::activate(double location, int speed) {
 	if (_station_manager.is_next_station_stop()) {

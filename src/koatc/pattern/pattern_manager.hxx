@@ -9,6 +9,7 @@
 #include "koatc/pattern/speed_limit_pattern.hxx"
 #include "koatc/pattern/station_emergency_pattern.hxx"
 #include "koatc/pattern/station_pattern.hxx"
+#include "koatc/sound_player.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc {
@@ -44,6 +45,8 @@ private:
 	station_emergency_pattern _station_emergency;
 	overrun_protection_step1_pattern _orp_step1;
 	overrun_protection_step2_pattern _orp_step2;
+
+	sound_player _buzzer_player{sound_id::buzzer};
 
 	double _limit = 0;
 	int _bottom = 0;

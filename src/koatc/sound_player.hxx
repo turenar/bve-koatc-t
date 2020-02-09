@@ -4,15 +4,23 @@
 #include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc {
-class sound_timer {
+class sound_player {
 private:
 	constexpr static int invalid_time = -1;
 
 public:
-	explicit sound_timer(sound_id id) : _id(id) {}
+	explicit sound_player(sound_id id) : _id(id) {}
 
 	void start(int time, int duration) {
 		_end = time + duration;
+	}
+	void start() {
+		_end = std::numeric_limits<int>::max();
+	}
+	void stop() {
+		if (_end != invalid_time) {
+			_end = 0;
+		}
 	}
 	void output(wrapper::atc_output out, int time) {
 		if (_end == invalid_time) {

@@ -78,9 +78,12 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 		output.set_sound(sound_id::bell, bve::ats::sound_control::play);
 		_bell = false;
 	}
-	if (_station_emergency.buzzer()) {
-		output.set_sound(sound_id::buzzer, bve::ats::sound_control::play_loop);
+	if (_orp_step2.buzzer() || _station_emergency.buzzer()) {
+		_buzzer_player.start();
+	} else {
+		_buzzer_player.stop();
 	}
+	_buzzer_player.output(output, _vehicle_state.time);
 }
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
