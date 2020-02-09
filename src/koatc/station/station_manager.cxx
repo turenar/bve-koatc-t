@@ -28,14 +28,9 @@ void station_manager::tick(wrapper::atc_output output) {
 	output.set_panel(panel_id::atc_operation_type, static_cast<int>(_operation_type));
 	if (is_next_station_stop() && _stop_approaching) {
 		output.set_panel(panel_id::atc_next_stop, next_stop().number());
-		if (_approaching_timer.waiting_once(_vehicle_state.time)) {
-			output.set_sound(sound_id::buzzer, bve::ats::sound_control::play_continue);
-		} else {
-			output.set_sound(sound_id::buzzer, bve::ats::sound_control::stop);
-		}
+		_approaching_sound.output(output, _vehicle_state.time);
 	} else {
 		output.set_panel(panel_id::atc_next_stop, invalid_station_for_monitor);
-		output.set_sound(sound_id::buzzer, bve::ats::sound_control::stop);
 	}
 }
 bool station_manager::is_next_station_stop() const {
@@ -75,7 +70,7 @@ void station_manager::notify_stop() {
 		spdlog::warn("no station registered! @{}", _vehicle_state.location);
 	} else if (_stations.front().stop()) {
 		_stop_approaching = true;
-		_approaching_timer.reset(_vehicle_state.time);
+		_approaching_sound.start(_vehicle_state.time, 836 * 3);
 	}
 }
 void station_manager::arrive_station() {

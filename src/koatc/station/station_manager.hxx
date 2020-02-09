@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "ats/vehicle_state.hxx"
+#include "koatc/sound_timer.hxx"
 #include "koatc/station/station_info.hxx"
 #include "koatc/timer.hxx"
 #include "koatc/wrapper/atc_output.hxx"
@@ -33,7 +34,7 @@ public:
 private:
 	const bve::ats::vehicle_state& _vehicle_state;
 	std::vector<station_info> _stations;
-	timer _approaching_timer{836 * 3};
+	sound_timer _approaching_sound{sound_id::buzzer};
 	timer _stopped_timer{5000};
 
 	unsigned int _train_number = 0;

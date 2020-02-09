@@ -3,6 +3,7 @@
 namespace turenar::koatc::wrapper {
 atc_output::atc_output(int* panels, int* sound) : _panels(panels), _sounds(sound) {
 	set_sound(sound_id::bell, bve::ats::sound_control::play_continue);
+	set_sound(sound_id::buzzer, bve::ats::sound_control::play_continue);
 }
 void atc_output::set_panel(panel_id id, int value) {
 	int num = static_cast<int>(id);

@@ -69,12 +69,14 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 		output.set_sound(sound_id::bell, bve::ats::sound_control::play);
 		_bell = false;
 	}
+	if (_station_emergency.buzzer()) {
+		output.set_sound(sound_id::buzzer, bve::ats::sound_control::play_loop);
+	}
 }
 void pattern_manager::update_pattern() {
 	double location = _vehicle_state.location;
 	each_beacon([this](auto&& pat) { pat.tick(); });
 	double limit = accumulate_beacon(static_cast<double>(no_pattern), [](double last, const pattern_generator& pat) {
-		spdlog::debug("{}, {}", last, pat.limit());
 		return std::min(last, pat.limit());
 	});
 	int bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
@@ -105,7 +107,7 @@ void pattern_manager::debug_patterns() const {
 		spdlog::debug("  [speed]   {}", pat);
 	}
 	spdlog::debug("  [station] {}", _station);
-	spdlog::debug("  [sta_up]  {}", _station_emergency);
+	spdlog::debug("  [sta_emg]  {}", _station_emergency);
 }
 void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 	switch (static_cast<beacon_id>(beacon.type)) {

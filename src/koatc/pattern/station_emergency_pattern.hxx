@@ -1,6 +1,7 @@
 #pragma once
 
 #include "koatc/pattern/pattern_generator.hxx"
+#include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc::station {
 class station_manager;
@@ -14,8 +15,8 @@ public:
 	station_emergency_pattern(const configuration&, const bve::ats::vehicle_state&, const station::station_manager&);
 
 	void activate(double location, int speed);
-	bool active() const {
-		return _station_number != invalid_station;
+	[[nodiscard]] bool buzzer() const {
+		return _station_number != invalid_station && !_low_speed;
 	}
 	void tick();
 
@@ -23,5 +24,6 @@ private:
 	const station::station_manager& _station_manager;
 	int _station_number = invalid_station;
 	bool _low_speed = false;
+	bool _buzzer;
 };
 } // namespace turenar::koatc::pattern
