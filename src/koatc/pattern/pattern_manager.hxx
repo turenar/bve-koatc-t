@@ -63,5 +63,6 @@ private:
 	void each_beacon(UnaryFunction fn);
 	template <typename Pattern, typename... Args>
 	void activate_beacon(Pattern& pattern, const bve::ats::beacon&, Args&&... args);
+	[[nodiscard]] bool should_skip_bell() const;
 };
 } // namespace turenar::koatc::pattern

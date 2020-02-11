@@ -104,15 +104,18 @@ void pattern_manager::update_pattern() {
 				return last;
 			});
 
-	if (_limit + updated_bell_threshold <= limit) {
+	if (_limit + updated_bell_threshold <= limit && should_skip_bell()) {
 		_bell = true;
 	}
 	_limit = limit;
 	_bottom = bottom;
 	_handle = handle;
 }
+bool pattern_manager::should_skip_bell() const {
+	return (std::abs(_limit) > too_low_speed || _vehicle_state.speed > std::numeric_limits<double>::epsilon());
+}
 void pattern_manager::debug_patterns() const {
-	spdlog::debug("patterns: brake={}, current={} -> {}", _handle, _limit, _bottom);
+	spdlog::debug("patterns: brake={}, current@{}={} -> {}", _handle, _vehicle_state.location, _limit, _bottom);
 	spdlog::debug("  [section] {}", _red_section);
 	for (auto& pat : _speed_limits) {
 		spdlog::debug("  [speed]   {}", pat);
