@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "ats/beacon.hxx"
 #include "ats/handles.hxx"
 #include "ats/notch_position.hxx"
@@ -41,6 +42,8 @@ private:
 	configuration _config;
 	bve::ats::vehicle_state _vehicle_state = {};
 
+	std::vector<bve::ats::beacon> _unprocessed_beacons;
+
 	signal::signal_manager _signal_manager;
 	section::section_manager _section_manager;
 	station::station_manager _station_manager;
@@ -51,5 +54,7 @@ private:
 	bve::ats::notch_position _brake_notch{0};
 
 	timer _timer{250};
+
+	void process_beacon(const bve::ats::beacon& beacon);
 };
 } // namespace turenar::koatc

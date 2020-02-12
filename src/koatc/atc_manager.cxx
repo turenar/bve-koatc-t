@@ -17,8 +17,18 @@ atc_manager::atc_manager(configuration config, bve::ats::vehicle_spec spec)
 		  _pattern_manager(_config, _vehicle_state, _section_manager, _signal_manager, _station_manager) {}
 
 bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_output output) {
+	// first, update location
 	_vehicle_state = st;
+	// second, process beacons
+	// beacon has `distance' relative to *current* location, not last location passed in #tick invocation
+	for (const auto& beacon : _unprocessed_beacons) {
+		process_beacon(beacon);
+	}
+	_unprocessed_beacons.clear();
+
+	// third, update ATC
 	if (_timer.wake(st.time)) {
+
 		_signal_manager.tick();
 		_signal_manager.output(output);
 		_pattern_manager.tick(output);
@@ -29,11 +39,15 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 		}
 	}
 
+	// finally, output handle
 	handles handle{_spec, _brake_notch, _power_notch, _reverser};
 	handle.brake(_pattern_manager.handle());
 	return handle;
 }
 void atc_manager::put_beacon(bve::ats::beacon beacon) {
+	_unprocessed_beacons.emplace_back(beacon);
+}
+void atc_manager::process_beacon(const bve::ats::beacon& beacon) {
 	int optional = beacon.optional;
 	auto type = static_cast<beacon_id>(beacon.type);
 	spdlog::info(
