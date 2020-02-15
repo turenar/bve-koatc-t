@@ -86,12 +86,21 @@ void pattern_manager::update_monitor(wrapper::atc_output output) {
 	_buzzer_player.output(output, _vehicle_state.time);
 }
 void pattern_manager::update_pattern() {
+	using limit_bottom_pair = std::pair<double, int>;
 	double location = _vehicle_state.location;
+	double limit;
+	int bottom;
 	each_beacon([this](auto&& pat) { pat.tick(); });
-	double limit = accumulate_beacon(static_cast<double>(no_pattern), [](double last, const pattern_generator& pat) {
-		return std::min(last, pat.limit());
-	});
-	int bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
+	std::tie(limit, bottom) = accumulate_beacon(
+			limit_bottom_pair{double{no_pattern}, no_pattern},
+			[](const limit_bottom_pair& last, const pattern_generator& pat) {
+				if (pat.limit() < last.first) {
+					return limit_bottom_pair{pat.limit(), pat.bottom()};
+				} else {
+					return last;
+				}
+			});
+	bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
 		if (pat.limit() > limit + advance_notice) {
 			return last;
 		} else {
