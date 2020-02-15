@@ -139,6 +139,9 @@ void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 		break;
 	case beacon_id::overrun_protection_step2:
 		activate_beacon(_orp_step2, beacon, beacon.signal, _vehicle_state.location + beacon.distance);
+		if (!_orp_step2.active()) {
+			break; // do not generate emergency pattern
+		}
 		[[fallthrough]];
 	case beacon_id::control_stop_emergency:
 		activate_beacon(_station_emergency, beacon);

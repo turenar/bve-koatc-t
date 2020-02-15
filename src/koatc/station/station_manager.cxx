@@ -52,6 +52,12 @@ void station_manager::approach_station(unsigned int stop_bits, int station) {
 		spdlog::warn("duplicated station {}, location jumped?", station);
 	} else {
 		spdlog::debug("approaching station {}, stop={}", station, stop);
+		if (!_stations.empty()) {
+			spdlog::info("current registered stations:");
+			for (const auto& sta : _stations) {
+				spdlog::info("  station={}, stop={}", sta.number(), sta.stop());
+			}
+		}
 		_stations.emplace_back(station, stop);
 	}
 }
