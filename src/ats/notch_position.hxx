@@ -13,7 +13,7 @@ public:
 	}
 
 	[[nodiscard]] constexpr notch_position half() const {
-		return notch_position{_position / 2};
+		return notch_position{(_position + 1) / 2};
 	}
 
 private:
