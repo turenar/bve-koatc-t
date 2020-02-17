@@ -7,11 +7,14 @@
 namespace bve::ats {
 struct vehicle_state;
 }
+namespace turenar::koatc {
+class configuration;
+}
 
 namespace turenar::koatc::signal {
 class signal_manager {
 public:
-	signal_manager(const bve::ats::vehicle_state&);
+	signal_manager(const configuration& config, const bve::ats::vehicle_state&);
 
 	void set_open_section(int);
 	[[nodiscard]] car_signal signal() const {
@@ -24,7 +27,7 @@ public:
 
 private:
 	const bve::ats::vehicle_state& _vehicle_state;
-	timer _emergency_timer{5000};
+	timer _emergency_timer;
 	int _open_section = 0;
 	car_signal _signal = car_signal::no_signal;
 	car_signal _next_signal = _signal;

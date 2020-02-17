@@ -34,6 +34,9 @@ public:
 	[[nodiscard]] int section_margin() const {
 		return _section_margin;
 	}
+	[[nodiscard]] int emergency_time() const {
+		return _emergency_time;
+	}
 
 private:
 	double _deceleration = 2.5;
@@ -45,6 +48,7 @@ private:
 	int _pattern_approaching = 10;
 	int _bell_threshold = 2;
 	int _section_margin = 20;
+	int _emergency_time = 4000;
 };
 
 template <typename OStream>

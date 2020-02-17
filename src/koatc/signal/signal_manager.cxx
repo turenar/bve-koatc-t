@@ -1,9 +1,11 @@
-#include "ats/vehicle_state.hxx"
 #include <spdlog/spdlog.h>
+#include "ats/vehicle_state.hxx"
+#include "koatc/configuration.hxx"
 #include "koatc/signal/signal_manager.hxx"
 
 namespace turenar::koatc::signal {
-signal_manager::signal_manager(const bve::ats::vehicle_state& state) : _vehicle_state(state) {}
+signal_manager::signal_manager(const configuration& config, const bve::ats::vehicle_state& state)
+		: _vehicle_state(state), _emergency_timer(config.emergency_time()) {}
 void signal_manager::set_open_section(int open_section) {
 	spdlog::info("update open section: {}", open_section);
 	_open_section = open_section;
