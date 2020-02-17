@@ -1,5 +1,5 @@
-#include <spdlog/spdlog.h>
 #include "koatc/configuration.hxx"
+#include "koatc/pattern/init_requirements.hxx"
 #include "koatc/pattern/pattern_generator.hxx"
 
 namespace turenar::koatc::pattern {
@@ -10,9 +10,8 @@ namespace {
 } // namespace
 
 // km/h/s -> km/1000 h^2
-pattern_generator::pattern_generator(
-		const configuration& config, const bve::ats::vehicle_state& state, bool use_emergency)
-		: _config(config), _vehicle_state(state), _curve(deceleration(config, use_emergency) * 3.6),
+pattern_generator::pattern_generator(const init_requirements& req, bool use_emergency)
+		: _config(req.config), _vehicle_state(req.state), _curve(deceleration(req.config, use_emergency) * 3.6),
 		  _use_emergency(use_emergency) {}
 void pattern_generator::clear() {
 	_curve.clear();

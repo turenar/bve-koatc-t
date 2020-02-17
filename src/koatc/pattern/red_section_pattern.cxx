@@ -1,15 +1,12 @@
 #include "ats/vehicle_state.hxx"
+#include "koatc/pattern/init_requirements.hxx"
 #include "koatc/pattern/red_section_pattern.hxx"
 #include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
 
 namespace turenar::koatc::pattern {
-red_section_pattern::red_section_pattern(
-		const configuration& config,
-		const bve::ats::vehicle_state& state,
-		const section::section_manager& section_manager,
-		const signal::signal_manager& signal_manager)
-		: pattern_generator(config, state), _signal_manager(signal_manager), _section_manager(section_manager) {}
+red_section_pattern::red_section_pattern(const init_requirements& req)
+		: pattern_generator(req), _signal_manager(req.signal), _section_manager(req.section) {}
 void red_section_pattern::tick() {
 	int open_section = _signal_manager.open_section();
 	const section::section_info& section = _section_manager.get(open_section);

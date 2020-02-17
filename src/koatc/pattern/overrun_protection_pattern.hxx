@@ -21,13 +21,7 @@ protected:
 	const section::section_manager& _section_manager;
 	double _target = minimum_location;
 
-	overrun_protection_pattern(
-			const configuration& config,
-			const bve::ats::vehicle_state& state,
-			const signal::signal_manager& signal,
-			const section::section_manager& section,
-			bool use_emergency)
-			: pattern_generator(config, state, use_emergency), _signal_manager(signal), _section_manager(section) {}
+	overrun_protection_pattern(const init_requirements& req, bool use_emergency);
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const overrun_protection_pattern& c) {

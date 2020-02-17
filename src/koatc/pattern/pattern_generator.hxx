@@ -9,12 +9,13 @@
 
 namespace turenar::koatc {
 class configuration;
+class init_requirements;
 }
 
 namespace turenar::koatc::pattern {
 class pattern_generator {
 public:
-	pattern_generator(const configuration&, const bve::ats::vehicle_state& state, bool use_emergency = false);
+	pattern_generator(const init_requirements& req, bool use_emergency = false);
 
 	void set_flat_speed(int speed);
 	void set_target_speed(double location, int speed);

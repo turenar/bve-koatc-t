@@ -5,6 +5,7 @@ koatc_files = files([
 	'pattern/curve_pattern.hxx',
 	'pattern/flat_pattern.hxx',
 	'pattern/handle_command.hxx',
+	'pattern/init_requirements.hxx',
 	'pattern/overrun_protection_pattern.cxx',
 	'pattern/overrun_protection_pattern.hxx',
 	'pattern/overrun_protection_step1_pattern.hxx',

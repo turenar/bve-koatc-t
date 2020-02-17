@@ -1,4 +1,5 @@
 #include <spdlog/spdlog.h>
+#include "koatc/pattern/init_requirements.hxx"
 #include "koatc/pattern/overrun_protection_pattern.hxx"
 #include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
@@ -7,6 +8,8 @@ namespace turenar::koatc::pattern {
 namespace {
 	constexpr int minimum_section_length = 30;
 }
+overrun_protection_pattern::overrun_protection_pattern(const init_requirements& req, bool use_emergency)
+		: pattern_generator(req, use_emergency), _signal_manager(req.signal), _section_manager(req.section) {}
 void overrun_protection_pattern::activate(int section, double section_location, double location, int speed) {
 	if (section == 0) {
 		_target = section_location + minimum_section_length;

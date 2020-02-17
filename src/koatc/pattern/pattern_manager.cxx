@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 #include "ats/vehicle_state.hxx"
 #include "koatc/beacon_id.hxx"
+#include "koatc/pattern/init_requirements.hxx"
 #include "koatc/pattern/pattern_manager.hxx"
 
 namespace turenar::koatc::pattern {
@@ -26,10 +27,12 @@ pattern_manager::pattern_manager(
 		const section::section_manager& section,
 		const signal::signal_manager& signal,
 		const station::station_manager& station)
-		: _config(config), _signal_manager(signal), _vehicle_state(state), _red_section(config, state, section, signal),
-		  _speed_limits{{config, state}, {config, state}, {config, state}, {config, state}},
-		  _station(config, state, station), _station_emergency(config, state, station),
-		  _orp_step1(config, state, signal, section), _orp_step2(config, state, signal, section) {}
+		: pattern_manager{init_requirements{config, state, section, signal, station}} {}
+pattern_manager::pattern_manager(turenar::koatc::pattern::init_requirements req)
+		: _config(req.config), _signal_manager(req.signal), _vehicle_state(req.state), _red_section(req),
+		  _speed_limits{{req}, {req}, {req}, {req}},
+		  _station(req), _station_emergency(req),
+		  _orp_step1(req), _orp_step2(req) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_red_section);

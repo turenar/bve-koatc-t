@@ -1,10 +1,10 @@
+#include "koatc/pattern/init_requirements.hxx"
 #include "koatc/pattern/station_pattern.hxx"
 #include "koatc/station/station_manager.hxx"
 
 namespace turenar::koatc::pattern {
-station_pattern::station_pattern(
-		const configuration& config, const bve::ats::vehicle_state& state, const station::station_manager& manager)
-		: pattern_generator(config, state), _station_manager(manager) {}
+station_pattern::station_pattern(const init_requirements& req)
+		: pattern_generator(req), _station_manager(req.station) {}
 void station_pattern::tick() {
 	if (_station_manager.has_stop()) {
 		if (_station_manager.stop_arrived()) {

@@ -17,6 +17,8 @@ class configuration;
 }
 
 namespace turenar::koatc::pattern {
+class init_requirements;
+
 class pattern_manager {
 public:
 	pattern_manager(
@@ -53,6 +55,7 @@ private:
 	handle_command _handle = handle_command::neutral();
 	bool _bell = false;
 
+	pattern_manager(init_requirements);
 	void update_pattern();
 	void update_monitor(wrapper::atc_output);
 	void debug_patterns() const;

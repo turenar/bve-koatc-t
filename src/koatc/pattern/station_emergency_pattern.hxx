@@ -12,10 +12,10 @@ private:
 	constexpr static int invalid_station = -1;
 
 public:
-	station_emergency_pattern(const configuration&, const bve::ats::vehicle_state&, const station::station_manager&);
+	station_emergency_pattern(const init_requirements& req);
 
 	void activate(double location, int speed);
-	[[nodiscard]] bool buzzer() const ;
+	[[nodiscard]] bool buzzer() const;
 	void tick();
 
 private:

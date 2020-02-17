@@ -1,11 +1,11 @@
 #include "koatc/configuration.hxx"
+#include "koatc/pattern/init_requirements.hxx"
 #include "koatc/pattern/station_emergency_pattern.hxx"
 #include "koatc/station/station_manager.hxx"
 
 namespace turenar::koatc::pattern {
-station_emergency_pattern::station_emergency_pattern(
-		const configuration& config, const bve::ats::vehicle_state& state, const station::station_manager& manager)
-		: pattern_generator(config, state, true), _station_manager(manager) {}
+station_emergency_pattern::station_emergency_pattern(const init_requirements& req)
+		: pattern_generator(req, true), _station_manager(req.station) {}
 void station_emergency_pattern::tick() {
 	if (_station_manager.is_next_station_stop() && _station_number == _station_manager.next_stop().number()) {
 		if (_low_speed || _vehicle_state.speed < too_low_speed) {
