@@ -29,13 +29,11 @@ pattern_manager::pattern_manager(
 		const station::station_manager& station)
 		: pattern_manager{init_requirements{config, state, section, signal, station}} {}
 pattern_manager::pattern_manager(turenar::koatc::pattern::init_requirements req)
-		: _config(req.config), _signal_manager(req.signal), _vehicle_state(req.state), _red_section(req),
-		  _speed_limits{{req}, {req}, {req}, {req}},
-		  _station(req), _station_emergency(req),
-		  _orp_step1(req), _orp_step2(req) {}
+		: _config(req.config), _signal_manager(req.signal),
+		  _vehicle_state(req.state), _speed_limits{{req}, {req}, {req}, {req}}, _station(req), _station_emergency(req),
+		  _orp_step1(req), _orp_step2(req), _red_section(req, _orp_step1) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
-	fn(_red_section);
 	for (auto& pat : _speed_limits) {
 		fn(pat);
 	}
@@ -43,6 +41,7 @@ void pattern_manager::each_beacon(UnaryFunction fn) {
 	fn(_orp_step2);
 	fn(_station);
 	fn(_station_emergency);
+	fn(_red_section);
 }
 template <typename Accumulator, typename Result>
 Result pattern_manager::accumulate_beacon(Result start, Accumulator op) {
@@ -95,24 +94,25 @@ void pattern_manager::update_pattern() {
 	int bottom;
 	each_beacon([this](auto&& pat) { pat.tick(); });
 	std::tie(limit, bottom) = accumulate_beacon(
-			limit_bottom_pair{double{no_pattern}, no_pattern},
-			[](const limit_bottom_pair& last, const pattern_generator& pat) {
-				if (pat.limit() < last.first) {
+			limit_bottom_pair{double{no_pattern}, no_pattern}, [](const limit_bottom_pair& last, const auto& pat) {
+				if (pat.active() && pat.limit() < last.first) {
 					return limit_bottom_pair{pat.limit(), pat.bottom()};
 				} else {
 					return last;
 				}
 			});
-	bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const pattern_generator& pat) {
-		if (pat.limit() > limit + advance_notice) {
-			return last;
-		} else {
+	bottom = accumulate_beacon(static_cast<int>(limit), [limit, location](int last, const auto& pat) {
+		if (pat.active() && pat.limit() <= limit + advance_notice) {
 			return std::min(last, pat.bottom());
+		} else {
+			return last;
 		}
 	});
 	handle_command handle =
 			accumulate_beacon(handle_command::neutral(), [](handle_command last, const auto& pat) -> handle_command {
-				last.promote(pat.handle());
+				if (pat.active()) {
+					last.promote(pat.handle());
+				}
 				return last;
 			});
 
@@ -148,10 +148,10 @@ void pattern_manager::process_beacon(const bve::ats::beacon& beacon) {
 		activate_beacon(limiter, beacon);
 	} break;
 	case beacon_id::overrun_protection_step1:
-		activate_beacon(_orp_step1, beacon, beacon.signal, _vehicle_state.location + beacon.distance);
+		activate_beacon(_orp_step1, beacon, _vehicle_state.location + beacon.distance);
 		break;
 	case beacon_id::overrun_protection_step2:
-		activate_beacon(_orp_step2, beacon, beacon.signal, _vehicle_state.location + beacon.distance);
+		activate_beacon(_orp_step2, beacon, _vehicle_state.location + beacon.distance);
 		if (!_orp_step2.active()) {
 			break; // do not generate emergency pattern
 		}

@@ -29,6 +29,7 @@ void pattern_generator::set_target_speed(double location, int flat_speed, int bo
 	_flat.generate_pattern(flat_speed);
 }
 void pattern_generator::tick() {
+	_inactive_by_exclusive = _exclusive_pattern && _exclusive_pattern->active();
 	update_pattern();
 	update_handle();
 }
@@ -67,5 +68,8 @@ void pattern_generator::update_handle_normal() {
 	} else {
 		_handle = handle_command::neutral();
 	}
+}
+void pattern_generator::clear_handle() {
+	_handle = handle_command::neutral();
 }
 } // namespace turenar::koatc::pattern

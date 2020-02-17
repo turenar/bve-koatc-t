@@ -14,9 +14,11 @@ namespace section {
 }
 } // namespace turenar::koatc
 namespace turenar::koatc::pattern {
+class overrun_protection_step1_pattern;
+
 class red_section_pattern : public pattern_generator {
 public:
-	red_section_pattern(const init_requirements& req);
+	red_section_pattern(const init_requirements& req, const overrun_protection_step1_pattern& orp);
 
 	void tick();
 

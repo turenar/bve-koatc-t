@@ -13,7 +13,7 @@ namespace signal {
 namespace turenar::koatc::pattern {
 class overrun_protection_pattern : public pattern_generator {
 public:
-	void activate(int section, double section_location, double location, int speed);
+	void activate(double section_location, double location, int speed);
 	void tick();
 
 protected:
@@ -26,7 +26,7 @@ protected:
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const overrun_protection_pattern& c) {
 		os << static_cast<const pattern_generator&>(c);
-		if (c.active()) {
+		if (c._flat) {
 			os << ", section_location: @" << c._target;
 		}
 		return os;

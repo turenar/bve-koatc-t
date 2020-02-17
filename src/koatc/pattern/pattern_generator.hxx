@@ -25,7 +25,7 @@ public:
 	void tick();
 
 	[[nodiscard]] bool active() const {
-		return !!_flat;
+		return !_inactive_by_self && !_inactive_by_exclusive && !!_flat;
 	}
 	[[nodiscard]] double limit() const {
 		return _current_limit;
@@ -40,6 +40,7 @@ public:
 protected:
 	const configuration& _config;
 	const bve::ats::vehicle_state& _vehicle_state;
+	const pattern_generator* _exclusive_pattern = nullptr;
 
 	curve_pattern _curve;
 	flat_pattern _flat;
@@ -49,16 +50,24 @@ protected:
 	handle_command _handle = handle_command::neutral();
 
 	bool _use_emergency = false;
+	bool _inactive_by_self = false;
+	bool _inactive_by_exclusive = false;
 
 	void update_pattern();
 	void update_handle();
 	void update_handle_normal();
 	void update_handle_emergency();
+	void clear_handle();
 
 	template <typename OStream>
 	friend OStream& operator<<(OStream& os, const pattern_generator& c) {
-		if (!c.active()) {
-			return os << "(inactive)";
+		if (!c._flat) {
+			return os << "(no pattern)";
+		}
+		if (c._inactive_by_self) {
+			os << "(inactive:self) ";
+		} else if (c._inactive_by_exclusive) {
+			os << "(inactive:other) ";
 		}
 		os << "brake: " << c._handle << ", current: " << c._current_limit << " -> " << c._current_bottom
 		   << ", curve: " << c._curve << ", flat: " << c._flat;
