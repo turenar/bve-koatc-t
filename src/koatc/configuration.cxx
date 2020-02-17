@@ -6,6 +6,8 @@
 
 namespace turenar::koatc {
 namespace {
+	constexpr const TCHAR* section_name = _T("KO-ATC-T");
+
 	template <typename Result, typename Converter>
 	void parse(Result& target, LPCTSTR section, LPCTSTR key, LPCTSTR file, Converter);
 
@@ -16,15 +18,15 @@ namespace {
 configuration::configuration() = default;
 configuration::configuration(const std::filesystem::path& path) {
 	auto file = path.c_str();
-	parse_double(_deceleration, _T("ATC"), _T("Deceleration"), file);
-	parse_double(_deceleration_emergency, _T("ATC"), _T("DecelerationEmergency"), file);
-	parse_int(_pattern_offset, _T("ATC"), _T("PatternOffsetNormal"), file);
-	parse_int(_pattern_offset_full, _T("ATC"), _T("PatternOffsetFull"), file);
-	parse_int(_pattern_offset_emergency, _T("ATC"), _T("PatternOffsetEmergency"), file);
+	parse_double(_deceleration, section_name, _T("Deceleration"), file);
+	parse_double(_deceleration_emergency, section_name, _T("DecelerationEmergency"), file);
+	parse_int(_pattern_offset, section_name, _T("PatternOffsetNormal"), file);
+	parse_int(_pattern_offset_full, section_name, _T("PatternOffsetFull"), file);
+	parse_int(_pattern_offset_emergency, section_name, _T("PatternOffsetEmergency"), file);
 
-	parse_int(_pattern_approaching, _T("ATC"), _T("PatternApproaching"), file);
-	parse_int(_bell_threshold, _T("ATC" ), _T("BellThreshold"), file);
-	parse_int(_section_margin, _T("ATC"), _T("SectionMargin"), file);
+	parse_int(_pattern_approaching, section_name, _T("PatternApproaching"), file);
+	parse_int(_bell_threshold, section_name, _T("BellThreshold"), file);
+	parse_int(_section_margin, section_name, _T("SectionMargin"), file);
 }
 
 namespace {
