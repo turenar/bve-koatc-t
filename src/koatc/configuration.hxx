@@ -37,6 +37,9 @@ public:
 	[[nodiscard]] int emergency_time() const {
 		return _emergency_time;
 	}
+	[[nodiscard]] int interval() const {
+		return _interval;
+	}
 
 private:
 	double _deceleration = 2.5;
@@ -49,6 +52,7 @@ private:
 	int _bell_threshold = 2;
 	int _section_margin = 20;
 	int _emergency_time = 4000;
+	int _interval = 250;
 };
 
 template <typename OStream>
@@ -56,6 +60,7 @@ OStream& operator<<(OStream& os, const configuration& c) {
 	return os << "configuration{pattern_offset=[" << c.pattern_offset() << ", " << c.pattern_offset_full() << ", "
 			  << c.pattern_offset_emergency() << "], deceleration=[" << c.deceleration() << ", "
 			  << c.deceleration_emergency() << "], pattern_approaching=" << c.pattern_approaching()
-			  << ", bell_threshold=" << c.bell_threshold() << ", section_margin=" << c.section_margin() << "}";
+			  << ", bell_threshold=" << c.bell_threshold() << ", section_margin=" << c.section_margin()
+			  << ", emergency_time=" << c.emergency_time() << ", interval=" << c.interval() << "}";
 }
 } // namespace turenar::koatc

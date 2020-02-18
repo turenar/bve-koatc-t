@@ -53,7 +53,7 @@ private:
 	bve::ats::notch_position _power_notch{0};
 	bve::ats::notch_position _brake_notch{0};
 
-	timer _timer{250};
+	timer _timer;
 
 	void process_beacon(const bve::ats::beacon& beacon);
 };
