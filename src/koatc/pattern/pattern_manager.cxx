@@ -30,8 +30,8 @@ pattern_manager::pattern_manager(
 		: pattern_manager{init_requirements{config, state, section, signal, station}} {}
 pattern_manager::pattern_manager(turenar::koatc::pattern::init_requirements req)
 		: _config(req.config), _signal_manager(req.signal),
-		  _vehicle_state(req.state), _speed_limits{{req}, {req}, {req}, {req}}, _station(req), _station_emergency(req),
-		  _orp_step1(req), _orp_step2(req), _red_section(req, _orp_step1) {}
+		  _vehicle_state(req.state), _speed_limits{{req}, {req}, {req}, {req}}, _station_emergency(req),
+		  _orp_step1(req), _orp_step2(req), _red_section(req, _orp_step1), _station(req, _orp_step1) {}
 template <typename UnaryFunction>
 void pattern_manager::each_beacon(UnaryFunction fn) {
 	for (auto& pat : _speed_limits) {

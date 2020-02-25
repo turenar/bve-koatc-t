@@ -42,11 +42,11 @@ private:
 	const bve::ats::vehicle_state& _vehicle_state;
 
 	speed_limit_pattern _speed_limits[4];
-	station_pattern _station;
 	station_emergency_pattern _station_emergency;
 	overrun_protection_step1_pattern _orp_step1;
 	overrun_protection_step2_pattern _orp_step2;
 	red_section_pattern _red_section;
+	station_pattern _station;
 
 	sound_player _buzzer_player{sound_id::buzzer};
 
