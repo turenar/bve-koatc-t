@@ -4,7 +4,7 @@
 #include "ats/vehicle_state.hxx"
 #include "koatc/sound_player.hxx"
 #include "koatc/station/station_info.hxx"
-#include "koatc/timer.hxx"
+#include "koatc/timer/continuous_timer.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc::station {
@@ -35,7 +35,7 @@ private:
 	const bve::ats::vehicle_state& _vehicle_state;
 	std::vector<station_info> _stations;
 	sound_player _approaching_sound{sound_id::buzzer};
-	timer _stopped_timer{5000};
+	timer::continuous_timer _stopped_timer{5000};
 
 	unsigned int _train_number = 0;
 	unsigned int _operation_type = 0;

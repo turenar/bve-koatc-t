@@ -1,9 +1,9 @@
 #pragma once
 
-namespace turenar::koatc {
-class timer {
+namespace turenar::koatc::timer {
+class continuous_timer {
 public:
-	constexpr explicit timer(int interval) : _interval(interval) {}
+	constexpr explicit continuous_timer(int interval) : _interval(interval) {}
 
 	bool wake(int time) {
 		bool wake_up = time < _last_time - _interval || _last_time + _interval < time;
@@ -11,9 +11,6 @@ public:
 			_last_time = time;
 		}
 		return wake_up;
-	}
-	bool waiting_once(int time) {
-		return time <= _last_time + _interval;
 	}
 	void reset(int time) {
 		_last_time = time;

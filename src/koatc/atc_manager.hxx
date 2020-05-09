@@ -15,7 +15,7 @@
 #include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
 #include "koatc/station/station_manager.hxx"
-#include "koatc/timer.hxx"
+#include "koatc/timer/continuous_timer.hxx"
 #include "koatc/wrapper/atc_output.hxx"
 
 namespace turenar::koatc {
@@ -58,7 +58,7 @@ private:
 	bve::ats::notch_position _power_notch{0};
 	bve::ats::notch_position _brake_notch{0};
 
-	timer _timer;
+	timer::continuous_timer _timer;
 
 	void process_beacon(const bve::ats::beacon& beacon);
 	void output(wrapper::atc_output output);
