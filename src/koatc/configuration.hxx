@@ -49,6 +49,9 @@ public:
 	[[nodiscard]] int control_key_min() const {
 		return _control_key_min;
 	}
+	[[nodiscard]] int power_on_time() const {
+		return _power_on_time;
+	}
 
 private:
 	double _deceleration = 2.5;
@@ -66,6 +69,7 @@ private:
 	int _control_key_position = 0;
 	int _control_key_max = 0;
 	int _control_key_min = 0;
+	int _power_on_time = 3000;
 };
 
 template <typename OStream>
@@ -76,6 +80,6 @@ OStream& operator<<(OStream& os, const configuration& c) {
 			  << ", bell_threshold=" << c.bell_threshold() << ", section_margin=" << c.section_margin()
 			  << ", emergency_time=" << c.emergency_time() << ", interval=" << c.interval()
 			  << ", control_key_position=" << c.control_key_position() << ", control_key_min=" << c.control_key_min()
-			  << ", control_key_max=" << c.control_key_max() << "}";
+			  << ", control_key_max=" << c.control_key_max() << ", power_on_time=" << c.power_on_time() << "}";
 }
 } // namespace turenar::koatc

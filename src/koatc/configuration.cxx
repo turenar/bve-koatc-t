@@ -32,6 +32,7 @@ configuration::configuration(const std::filesystem::path& path) {
 	parse_int(_control_key_position, section_name, _T("ControlKeyPosition"), file);
 	parse_int(_control_key_max, section_name, _T("ControlKeyMax"), file);
 	parse_int(_control_key_min, section_name, _T("ControlKeyMin"), file);
+	parse_int(_power_on_time, section_name, _T("PowerOnTime"), file);
 }
 
 namespace {

@@ -17,7 +17,7 @@ void station_manager::tick(wrapper::atc_output output) {
 	if (_stop_arrived) {
 		if (std::abs(_vehicle_state.speed) > std::numeric_limits<double>::epsilon()) {
 			_stopped_timer.reset(_vehicle_state.time);
-		} else if (_stopped_timer.wake(_vehicle_state.time)) {
+		} else if (_stopped_timer.tick(_vehicle_state.time)) {
 			_stop_approaching = false;
 			_stop_arrived = false;
 			_stations.erase(_stations.begin());

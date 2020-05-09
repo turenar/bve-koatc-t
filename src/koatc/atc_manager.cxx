@@ -16,7 +16,9 @@ atc_manager::atc_manager(configuration config, bve::ats::vehicle_spec spec)
 		: _spec(spec), _config(config), _control_key(_config), _signal_manager(_config, _vehicle_state),
 		  _station_manager(_vehicle_state),
 		  _pattern_manager(_config, _vehicle_state, _section_manager, _signal_manager, _station_manager),
-		  _timer(config.interval()) {}
+		  _timer(config.interval()) {
+	update_active();
+}
 
 bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_output output) {
 	// first, update location
@@ -28,21 +30,26 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 	}
 	_unprocessed_beacons.clear();
 
+	handles handle{_spec, _brake_notch, _power_notch, _reverser};
+	if (!_control_key.active()) {
+		// if inactive, output current handle
+		return handle;
+	}
+
 	// third, update ATC
-	if (_timer.wake(st.time)) {
+	if (_timer.tick(st.time)) {
 		_signal_manager.tick();
-		_signal_manager.output(output);
 		_pattern_manager.tick(output);
 		_station_manager.tick(output);
-		this->output(output);
 
 		if (_pattern_manager.handle() == pattern::handle_command::emergency()) {
 			_signal_manager.emergency();
 		}
 	}
-
 	// finally, output handle
-	handles handle{_spec, _brake_notch, _power_notch, _reverser};
+	_signal_manager.output(output);
+	_control_key.output(output);
+
 	handle.brake(_pattern_manager.handle());
 	return handle;
 }
@@ -53,17 +60,16 @@ void atc_manager::key_down(bve::ats::key_code key) {
 	switch (key) {
 	case bve::ats::key_code::key_7:
 		_control_key.turn_left();
+		update_active();
 		break;
 	case bve::ats::key_code::key_8:
 		_control_key.turn_right();
+		update_active();
 		break;
 	default:; // do nothing
 	}
 }
 void atc_manager::key_up(bve::ats::key_code) {}
-void atc_manager::output(wrapper::atc_output output) {
-	output.set_panel(panel_id::atc_power, _control_key.active());
-}
 void atc_manager::process_beacon(const bve::ats::beacon& beacon) {
 	int optional = beacon.optional;
 	auto type = static_cast<beacon_id>(beacon.type);
@@ -109,6 +115,13 @@ void atc_manager::process_beacon(const bve::ats::beacon& beacon) {
 		_station_manager.arrive_station();
 		break;
 	default:; // ignore
+	}
+}
+void atc_manager::update_active() {
+	if (_control_key.active()) {
+		_signal_manager.activate();
+	} else {
+		_signal_manager.shutdown();
 	}
 }
 } // namespace turenar::koatc

@@ -5,7 +5,7 @@ class continuous_timer {
 public:
 	constexpr explicit continuous_timer(int interval) : _interval(interval) {}
 
-	bool wake(int time) {
+	bool tick(int time) {
 		bool wake_up = time < _last_time - _interval || _last_time + _interval < time;
 		if (wake_up) {
 			_last_time = time;

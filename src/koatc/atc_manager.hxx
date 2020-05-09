@@ -61,6 +61,6 @@ private:
 	timer::continuous_timer _timer;
 
 	void process_beacon(const bve::ats::beacon& beacon);
-	void output(wrapper::atc_output output);
+	void update_active();
 };
 } // namespace turenar::koatc
