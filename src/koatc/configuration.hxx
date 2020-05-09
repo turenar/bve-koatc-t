@@ -40,6 +40,15 @@ public:
 	[[nodiscard]] int interval() const {
 		return _interval;
 	}
+	[[nodiscard]] int control_key_position() const {
+		return _control_key_position;
+	}
+	[[nodiscard]] int control_key_max() const {
+		return _control_key_max;
+	}
+	[[nodiscard]] int control_key_min() const {
+		return _control_key_min;
+	}
 
 private:
 	double _deceleration = 2.5;
@@ -53,6 +62,10 @@ private:
 	int _section_margin = 20;
 	int _emergency_time = 4000;
 	int _interval = 250;
+
+	int _control_key_position = 0;
+	int _control_key_max = 0;
+	int _control_key_min = 0;
 };
 
 template <typename OStream>
@@ -61,6 +74,8 @@ OStream& operator<<(OStream& os, const configuration& c) {
 			  << c.pattern_offset_emergency() << "], deceleration=[" << c.deceleration() << ", "
 			  << c.deceleration_emergency() << "], pattern_approaching=" << c.pattern_approaching()
 			  << ", bell_threshold=" << c.bell_threshold() << ", section_margin=" << c.section_margin()
-			  << ", emergency_time=" << c.emergency_time() << ", interval=" << c.interval() << "}";
+			  << ", emergency_time=" << c.emergency_time() << ", interval=" << c.interval()
+			  << ", control_key_position=" << c.control_key_position() << ", control_key_min=" << c.control_key_min()
+			  << ", control_key_max=" << c.control_key_max() << "}";
 }
 } // namespace turenar::koatc

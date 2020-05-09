@@ -3,12 +3,14 @@
 #include <vector>
 #include "ats/beacon.hxx"
 #include "ats/handles.hxx"
+#include "ats/key.hxx"
 #include "ats/notch_position.hxx"
 #include "ats/reverser_position.hxx"
 #include "ats/sound_control.hxx"
 #include "ats/vehicle_spec.hxx"
 #include "ats/vehicle_state.hxx"
 #include "koatc/configuration.hxx"
+#include "koatc/control_key_manager.hxx"
 #include "koatc/pattern/pattern_manager.hxx"
 #include "koatc/section/section_manager.hxx"
 #include "koatc/signal/signal_manager.hxx"
@@ -30,6 +32,8 @@ public:
 	void reverser(bve::ats::reverser_position rev) {
 		_reverser = rev;
 	}
+	void key_down(bve::ats::key_code key);
+	void key_up(bve::ats::key_code key);
 	void put_beacon(bve::ats::beacon beacon);
 	void set_open_section(int open_section) {
 		_signal_manager.set_open_section(open_section);
@@ -44,6 +48,7 @@ private:
 
 	std::vector<bve::ats::beacon> _unprocessed_beacons;
 
+	control_key_manager _control_key;
 	signal::signal_manager _signal_manager;
 	section::section_manager _section_manager;
 	station::station_manager _station_manager;
@@ -56,5 +61,6 @@ private:
 	timer _timer;
 
 	void process_beacon(const bve::ats::beacon& beacon);
+	void output(wrapper::atc_output output);
 };
 } // namespace turenar::koatc

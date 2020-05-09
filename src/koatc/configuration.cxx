@@ -28,6 +28,10 @@ configuration::configuration(const std::filesystem::path& path) {
 	parse_int(_bell_threshold, section_name, _T("BellThreshold"), file);
 	parse_int(_section_margin, section_name, _T("SectionMargin"), file);
 	parse_int(_emergency_time, section_name, _T("EmergencyTime"), file);
+
+	parse_int(_control_key_position, section_name, _T("ControlKeyPosition"), file);
+	parse_int(_control_key_max, section_name, _T("ControlKeyMax"), file);
+	parse_int(_control_key_min, section_name, _T("ControlKeyMin"), file);
 }
 
 namespace {

@@ -70,9 +70,13 @@ ATS_API void WINAPI SetReverser(int reverser) {
 	manager->reverser(static_cast<bve::ats::reverser_position>(reverser));
 }
 
-ATS_API void WINAPI KeyDown(int) {}
+ATS_API void WINAPI KeyDown(int key) {
+	manager->key_down(static_cast<bve::ats::key_code>(key));
+}
 
-ATS_API void WINAPI KeyUp(int) {}
+ATS_API void WINAPI KeyUp(int key) {
+	manager->key_up(static_cast<bve::ats::key_code>(key));
+}
 
 ATS_API void WINAPI HornBlow(int) {}
 

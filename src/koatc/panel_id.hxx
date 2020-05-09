@@ -2,6 +2,8 @@
 
 namespace turenar::koatc {
 enum class panel_id : int {
+	atc_power = 46,
+
 	atc_emergency_braking = 22,
 	atc_normal_braking = 23,
 

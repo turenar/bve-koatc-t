@@ -13,7 +13,8 @@ namespace {
 	}
 } // namespace
 atc_manager::atc_manager(configuration config, bve::ats::vehicle_spec spec)
-		: _spec(spec), _config(config), _signal_manager(config, _vehicle_state), _station_manager(_vehicle_state),
+		: _spec(spec), _config(config), _control_key(_config), _signal_manager(_config, _vehicle_state),
+		  _station_manager(_vehicle_state),
 		  _pattern_manager(_config, _vehicle_state, _section_manager, _signal_manager, _station_manager),
 		  _timer(config.interval()) {}
 
@@ -29,11 +30,11 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 
 	// third, update ATC
 	if (_timer.wake(st.time)) {
-
 		_signal_manager.tick();
 		_signal_manager.output(output);
 		_pattern_manager.tick(output);
 		_station_manager.tick(output);
+		this->output(output);
 
 		if (_pattern_manager.handle() == pattern::handle_command::emergency()) {
 			_signal_manager.emergency();
@@ -47,6 +48,21 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 }
 void atc_manager::put_beacon(bve::ats::beacon beacon) {
 	_unprocessed_beacons.emplace_back(beacon);
+}
+void atc_manager::key_down(bve::ats::key_code key) {
+	switch (key) {
+	case bve::ats::key_code::key_7:
+		_control_key.turn_left();
+		break;
+	case bve::ats::key_code::key_8:
+		_control_key.turn_right();
+		break;
+	default:; // do nothing
+	}
+}
+void atc_manager::key_up(bve::ats::key_code) {}
+void atc_manager::output(wrapper::atc_output output) {
+	output.set_panel(panel_id::atc_power, _control_key.active());
 }
 void atc_manager::process_beacon(const bve::ats::beacon& beacon) {
 	int optional = beacon.optional;
