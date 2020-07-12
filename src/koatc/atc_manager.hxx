@@ -34,6 +34,8 @@ public:
 	}
 	void key_down(bve::ats::key_code key);
 	void key_up(bve::ats::key_code key);
+	void open_door();
+	void close_door();
 	void put_beacon(bve::ats::beacon beacon);
 	void set_open_section(int open_section) {
 		_signal_manager.set_open_section(open_section);
@@ -59,6 +61,7 @@ private:
 	bve::ats::notch_position _brake_notch{0};
 
 	timer::continuous_timer _timer;
+	bool _door_opens = false;
 
 	void process_beacon(const bve::ats::beacon& beacon);
 	void update_active();

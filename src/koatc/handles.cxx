@@ -27,4 +27,7 @@ void handles::brake(pattern::handle_command command) {
 		brake(notch_position{static_cast<int>(_spec.brake_notches) + 1});
 	}
 }
+void handles::neutral() {
+	_reverser = reverser_position::neutral;
+}
 } // namespace turenar::koatc

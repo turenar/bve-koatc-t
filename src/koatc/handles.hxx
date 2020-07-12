@@ -21,6 +21,8 @@ public:
 		return {_brake, _power, _reverser, _constant_speed_control};
 	}
 
+	void neutral();
+
 private:
 	const bve::ats::vehicle_spec& _spec;
 	notch_position _brake;

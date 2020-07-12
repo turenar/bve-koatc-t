@@ -80,9 +80,13 @@ ATS_API void WINAPI KeyUp(int key) {
 
 ATS_API void WINAPI HornBlow(int) {}
 
-ATS_API void WINAPI DoorOpen(void) {}
+ATS_API void WINAPI DoorOpen(void) {
+	manager->open_door();
+}
 
-ATS_API void WINAPI DoorClose(void) {}
+ATS_API void WINAPI DoorClose(void) {
+	manager->close_door();
+}
 
 ATS_API void WINAPI SetSignal(int open_section) {
 	manager->set_open_section(open_section);

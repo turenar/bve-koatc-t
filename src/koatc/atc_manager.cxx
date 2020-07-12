@@ -51,6 +51,9 @@ bve::ats::handles atc_manager::tick(bve::ats::vehicle_state st, wrapper::atc_out
 	_control_key.output(output);
 
 	handle.brake(_pattern_manager.handle());
+	if (_door_opens) {
+		handle.neutral();
+	}
 	return handle;
 }
 void atc_manager::put_beacon(bve::ats::beacon beacon) {
@@ -70,6 +73,12 @@ void atc_manager::key_down(bve::ats::key_code key) {
 	}
 }
 void atc_manager::key_up(bve::ats::key_code) {}
+void atc_manager::open_door() {
+	_door_opens = true;
+}
+void atc_manager::close_door() {
+	_door_opens = false;
+}
 void atc_manager::process_beacon(const bve::ats::beacon& beacon) {
 	int optional = beacon.optional;
 	auto type = static_cast<beacon_id>(beacon.type);
